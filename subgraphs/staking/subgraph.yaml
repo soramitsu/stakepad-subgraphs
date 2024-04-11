@@ -1,0 +1,39 @@
+specVersion: 1.0.0
+description: A subgraph to index data from ERC20 Staking pool contracts
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: StakingPoolErc20
+    network: mainnet
+    source:
+      address: "0xd1F2c510c5D8edDd9728451049Ae8260c4A5Bf6a"
+      abi: StakingPoolErc20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ActivatePool
+        - Claim
+        - Stake
+        - Unstake
+        - UpdatePool
+      abis:
+        - name: StakingPoolErc20
+          file: ./abis/StakingPoolErc20.json
+      eventHandlers:
+        # - event: ActivatePool(bool)
+        #   handler: handleActivatePool
+        - event: Claim(address,uint256)
+          handler: handleClaim
+        - event: Stake(address,uint256)
+          handler: handleStake
+        - event: Unstake(address,uint256)
+          handler: handleUnstake
+        # - event: UpdatePool(uint256,uint256,uint256)
+        #   handler: handleUpdatePool
+      file: ./src/erc20_mapping.ts

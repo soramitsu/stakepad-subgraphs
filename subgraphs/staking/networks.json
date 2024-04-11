@@ -1,0 +1,8 @@
+{
+  "mainnet": {
+    "StakingPoolErc20": {
+      "address": "0xd1F2c510c5D8edDd9728451049Ae8260c4A5Bf6a",
+      "startBlock": 0
+    }
+  }
+}

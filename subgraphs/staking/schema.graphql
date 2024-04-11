@@ -1,0 +1,26 @@
+type Stake @entity {
+  id: ID!
+
+  # User's public address
+  user: Bytes!
+
+  amount: BigInt!
+}
+
+type Unstake @entity {
+  id: ID!
+
+  # User's public address
+  user: Bytes!
+
+  amount: BigInt!
+}
+
+type Claim @entity {
+  id: ID!
+
+  # User's public address
+  user: Bytes!
+
+  amount: BigInt!
+}
