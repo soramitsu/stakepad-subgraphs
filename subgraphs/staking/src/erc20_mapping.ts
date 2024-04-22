@@ -3,34 +3,64 @@ import {
   Unstake as UnstakeEvent, 
   Claim as ClaimEvent 
 } from "../generated/StakingPoolErc20/StakingPoolErc20"
-import { Stake, Unstake, Claim } from "../generated/schema"
+import { Pool, History } from "../generated/schema"
+import { getOrCreateUser } from "./utils/user";
+import { BigInt } from "@graphprotocol/graph-ts";
 
 export function handleStake(event: StakeEvent): void {
-  let entity = new Stake(event.transaction.hash.toHex() + '-' + event.logIndex.toString());
+  let user = getOrCreateUser(event.address, event.params.user);
+  let pool = Pool.load(event.address.toHex())!;
+  
+  if (user.amount.gt(BigInt.fromI32(0))) {
+    user.pending = user.pending.plus(user.amount.times(pool.accRewardPerShare))
+                               .minus(user.rewardDebt)
+  }
 
-  entity.id = event.transaction.hash.toHex() + '-' + event.logIndex.toString();
-  entity.user = event.params.user;
-  entity.amount = event.params.amount;
+  pool.totalTokensStaked = pool.totalTokensStaked.plus(event.params.amount);
+  user.amount = user.amount.plus(event.params.amount);
+  user.rewardDebt = user.amount
+                        .times(pool.accRewardPerShare);
 
-  entity.save();
+  pool.save();
+  user.save();
 }
 
 export function handleUnstake(event: UnstakeEvent): void {
-  let entity = new Unstake(event.transaction.hash.toHex() + '-' + event.logIndex.toString());
+  let user = getOrCreateUser(event.address, event.params.user);
+  let pool = Pool.load(event.address.toHex())!;
+  let history = History.load
 
-  entity.id = event.transaction.hash.toHex() + '-' + event.logIndex.toString();
-  entity.user = event.params.user;
-  entity.amount = event.params.amount;
+  user.pending = user.pending.plus(user.amount.times(pool.accRewardPerShare))
+                             .minus(user.rewardDebt)
 
-  entity.save();
+  user.amount = user.amount.minus(event.params.amount);
+
+  user.rewardDebt = user.amount
+                        .times(pool.accRewardPerShare);
+
+  pool.totalTokensStaked = pool.totalTokensStaked.minus(event.params.amount);
+
+  pool.save();
+  user.save();
 }
 
 export function handleClaim(event: ClaimEvent): void {
-  let entity = new Claim(event.transaction.hash.toHex() + '-' + event.logIndex.toString());
+  let user = getOrCreateUser(event.address, event.params.user);
+  let pool = Pool.load(event.address.toHex())!;
+  
+  if (user.amount.gt(BigInt.fromI32(0))) {
+    user.pending = user.pending.plus(user.amount.times(pool.accRewardPerShare))
+                                .minus(user.rewardDebt)
 
-  entity.id = event.transaction.hash.toHex() + '-' + event.logIndex.toString();
-  entity.user = event.params.user;
-  entity.amount = event.params.amount;
+    user.rewardDebt = user.amount.times(pool.accRewardPerShare)
+  }
 
-  entity.save();  
+  if (user.pending.gt(BigInt.fromI32(0))) {
+    pool.totalTokensClaimed = pool.totalTokensClaimed.plus(user.pending);
+    user.claimed = user.claimed.plus(user.pending);
+    user.pending = BigInt.fromI32(0)
+  }
+
+  pool.save();
+  user.save();
 }
