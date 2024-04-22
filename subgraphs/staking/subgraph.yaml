@@ -6,7 +6,7 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: StakingPoolErc20
+    name: ERC20Pools
     network: mainnet
     source:
       address: "0xd1F2c510c5D8edDd9728451049Ae8260c4A5Bf6a"
@@ -25,6 +25,8 @@ dataSources:
       abis:
         - name: StakingPoolErc20
           file: ./abis/StakingPoolErc20.json
+        - name: ERC20LockUpFactory
+          file: ./abis/ERC20LockUpFactory.json
       eventHandlers:
         # - event: ActivatePool(bool)
         #   handler: handleActivatePool
@@ -37,3 +39,24 @@ dataSources:
         # - event: UpdatePool(uint256,uint256,uint256)
         #   handler: handleUpdatePool
       file: ./src/erc20_mapping.ts
+
+templates:
+  - name: StakingPool
+    kind: ethereum/contract
+    network: mainnet
+    source:
+      abi: StakingPool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/factory.ts
+      entities:
+        - Pool
+        - User
+      abis:
+        - name: StakingPool
+          file: ./abis/ERC20LockUpFactory.json
+      eventHandlers:
+        - event: CreateStakingPool(indexed address)
+          handler: handleStakingPoolCreation

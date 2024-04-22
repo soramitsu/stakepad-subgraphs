@@ -2,7 +2,7 @@ import {
   Stake as StakeEvent, 
   Unstake as UnstakeEvent, 
   Claim as ClaimEvent 
-} from "../generated/StakingPoolErc20/StakingPoolErc20"
+} from "../generated/ERC20Pools/StakingPoolErc20"
 import { Pool, History } from "../generated/schema"
 import { getOrCreateUser } from "./utils/user";
 import { BigInt } from "@graphprotocol/graph-ts";
