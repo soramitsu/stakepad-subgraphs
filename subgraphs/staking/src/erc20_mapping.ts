@@ -1,8 +1,10 @@
 import { 
   Stake as StakeEvent, 
   Unstake as UnstakeEvent, 
-  Claim as ClaimEvent 
-} from "../generated/ERC20Pools/StakingPoolErc20"
+  Claim as ClaimEvent,
+  ActivatePool as PoolActivationEvent,
+  UpdatePool as PoolUpdateEvent
+} from "../generated/ERC20LockUpFactory/StakingPoolErc20"
 import { Pool, History } from "../generated/schema"
 import { getOrCreateUser } from "./utils/user";
 import { BigInt } from "@graphprotocol/graph-ts";
@@ -63,4 +65,31 @@ export function handleClaim(event: ClaimEvent): void {
 
   pool.save();
   user.save();
+}
+
+export function handleActivatePool(event: PoolActivationEvent): void {
+  let pool = Pool.load(event.address.toHex())!;
+
+  if (!pool.isPoolActive) {
+    pool.isPoolActive = true;
+  }
+
+  pool.save();
+}
+
+export function handleUpdatePool(event: PoolUpdateEvent): void {
+  let pool = Pool.load(event.address.toHex())!;
+
+  if (event.block.timestamp.gt(pool.lastRewardBlock)) {
+    if (pool.totalTokensStaked.gt(BigInt.fromI32(0))) {
+      const elapsedPeriod = event.block.timestamp.minus(pool.lastRewardBlock);
+
+      pool.accRewardPerShare = pool.accRewardPerShare.plus( 
+        pool.rewardTokenPerSecond.times(elapsedPeriod)
+                                  .div(pool.totalTokensStaked) );
+    }
+  }
+  
+  pool.lastRewardBlock = event.params.lastBlockNumber;
+  pool.save();
 }

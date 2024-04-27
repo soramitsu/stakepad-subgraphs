@@ -1,6 +1,6 @@
 import { Address } from "@graphprotocol/graph-ts";
 import { BigInt } from "@graphprotocol/graph-ts";
-import { User, History } from "../../generated/schema";
+import { User } from "../../generated/schema";
 
 export function getOrCreateUser(poolAddress: Address, address: Address): User {
   const id = poolAddress.toHex() + "-" + address.toHex();
@@ -17,7 +17,10 @@ export function getOrCreateUser(poolAddress: Address, address: Address): User {
 
     user.pending = BigInt.fromI32(0);
 
+    user.address = address;
+
     user.save();
   }
+  
   return user as User;
 }

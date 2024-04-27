@@ -34,6 +34,8 @@ type Pool @entity {
   totalTokensClaimed: BigInt!
 
   accRewardPerShare: BigInt!
+
+  lastRewardBlock: BigInt!
   
   isPoolActive: Boolean!
   
@@ -72,7 +74,7 @@ type User @entity {
  
   pending: BigInt!
 
-  address: String!
+  address: Bytes!
  
   pools: [History!]! @derivedFrom(field: "user")
 }
