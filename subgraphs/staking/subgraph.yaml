@@ -1,0 +1,61 @@
+specVersion: 1.0.0
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: ERC20LockUpFactory
+    network: mainnet
+    source:
+      address: "0xd1F2c510c5D8edDd9728451049Ae8260c4A5Bf6a"
+      abi: ERC20LockUpFactory
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Factory
+        - Token
+        - Pool
+        - History
+        - User
+      abis:
+        - name: ERC20LockUpFactory
+          file: ./abis/ERC20LockUpFactory.json
+        - name: StakingPoolErc20
+          file: ./abis/StakingPoolErc20.json
+      eventHandlers:
+        - event: CreateStakingPool(indexed address)
+          handler: handleStakingPoolCreation
+      file: ./src/factory.ts
+
+templates:
+  - name: StakingPoolErc20
+    kind: ethereum/contract
+    network: mainnet
+    source:
+      abi: StakingPoolErc20
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/erc20_mapping.ts
+      entities:
+        - Token
+        - Pool
+        - History
+        - User
+      abis:
+        - name: StakingPoolErc20
+          file: ./abis/StakingPoolErc20.json
+      eventHandlers:
+        - event: ActivatePool()
+          handler: handleActivatePool
+        - event: Claim(address,uint256)
+          handler: handleClaim
+        - event: Stake(address,uint256)
+          handler: handleStake
+        - event: Unstake(address,uint256)
+          handler: handleUnstake
+        - event: UpdatePool(uint256,uint256,uint256)
+          handler: handleUpdatePool

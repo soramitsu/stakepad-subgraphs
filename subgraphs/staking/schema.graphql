@@ -1,0 +1,80 @@
+type Factory @entity {
+  id: ID!
+
+  totalPools: BigInt!
+
+  poolAddress: [String!]!
+}
+
+type Token @entity(immutable: true) {
+  id: ID!
+
+  name: String!
+
+  symbol: String!
+
+  decimals: BigInt!
+}
+
+type Pool @entity {
+  id: ID!
+
+  stakeToken: Token!
+  
+  rewardToken: Token!
+  
+  startTime: BigInt!
+  
+  endTime: BigInt!
+  
+  rewardTokenPerSecond: BigInt!
+  
+  totalTokensStaked: BigInt!
+  
+  totalTokensClaimed: BigInt!
+
+  accRewardPerShare: BigInt!
+
+  lastRewardBlock: BigInt!
+  
+  isPoolActive: Boolean!
+  
+  admin: String!
+
+  owner: String!
+  
+  # List of users participating in the pool
+  users: [History!]! @derivedFrom(field: "pool")
+}
+
+type History @entity {
+  id: ID!
+
+  user: User!
+
+  pool: Pool!
+
+  amount: BigInt!
+
+  timestamp: BigInt!
+
+  transactionHash: Bytes!
+
+  event_type: String!
+}
+
+type User @entity {
+  id: ID!
+   
+  amount: BigInt!
+ 
+  claimed: BigInt!
+ 
+  rewardDebt: BigInt!
+ 
+  pending: BigInt!
+
+  address: Bytes!
+ 
+  pools: [History!]! @derivedFrom(field: "user")
+}
