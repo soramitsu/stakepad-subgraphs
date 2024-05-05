@@ -4,7 +4,7 @@ import {
   Claim as ClaimEvent,
   ActivatePool as PoolActivationEvent,
   UpdatePool as PoolUpdateEvent
-} from "../generated/ERC20LockUpFactory/StakingPoolErc20"
+} from "../generated/ERC20LockUpFactory/ERC20LockUpStakingPool"
 import { Pool, History } from "../generated/schema"
 import { getOrCreateUser } from "./utils/user";
 import { BigInt } from "@graphprotocol/graph-ts";
@@ -12,7 +12,16 @@ import { BigInt } from "@graphprotocol/graph-ts";
 export function handleStake(event: StakeEvent): void {
   let user = getOrCreateUser(event.address, event.params.user);
   let pool = Pool.load(event.address.toHex())!;
+  let history = new History(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
   
+  history.user = user.id;
+  history.pool = pool.id;
+  history.amount = event.params.amount;
+  history.timestamp = event.block.timestamp;
+  history.transactionHash = event.transaction.hash;
+  history.event_type = "Stake";
+  history.save();
+
   if (user.amount.gt(BigInt.fromI32(0))) {
     user.pending = user.pending.plus(user.amount.times(pool.accRewardPerShare))
                                .minus(user.rewardDebt)
@@ -30,7 +39,15 @@ export function handleStake(event: StakeEvent): void {
 export function handleUnstake(event: UnstakeEvent): void {
   let user = getOrCreateUser(event.address, event.params.user);
   let pool = Pool.load(event.address.toHex())!;
-  let history = History.load
+  let history = new History(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+
+  history.user = user.id;
+  history.pool = pool.id;
+  history.amount = event.params.amount;
+  history.timestamp = event.block.timestamp;
+  history.transactionHash = event.transaction.hash;
+  history.event_type = "Unstake";
+  history.save();
 
   user.pending = user.pending.plus(user.amount.times(pool.accRewardPerShare))
                              .minus(user.rewardDebt)
@@ -49,6 +66,15 @@ export function handleUnstake(event: UnstakeEvent): void {
 export function handleClaim(event: ClaimEvent): void {
   let user = getOrCreateUser(event.address, event.params.user);
   let pool = Pool.load(event.address.toHex())!;
+  let history = new History(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+
+  history.user = user.id;
+  history.pool = pool.id;
+  history.amount = user.pending;
+  history.timestamp = event.block.timestamp;
+  history.transactionHash = event.transaction.hash;
+  history.event_type = "Claim";
+  history.save();
   
   if (user.amount.gt(BigInt.fromI32(0))) {
     user.pending = user.pending.plus(user.amount.times(pool.accRewardPerShare))
@@ -80,16 +106,9 @@ export function handleActivatePool(event: PoolActivationEvent): void {
 export function handleUpdatePool(event: PoolUpdateEvent): void {
   let pool = Pool.load(event.address.toHex())!;
 
-  if (event.block.timestamp.gt(pool.lastRewardBlock)) {
-    if (pool.totalTokensStaked.gt(BigInt.fromI32(0))) {
-      const elapsedPeriod = event.block.timestamp.minus(pool.lastRewardBlock);
-
-      pool.accRewardPerShare = pool.accRewardPerShare.plus( 
-        pool.rewardTokenPerSecond.times(elapsedPeriod)
-                                  .div(pool.totalTokensStaked) );
-    }
-  }
-  
+  pool.accRewardPerShare = event.params.accumulatedRewardTokenPerShare;
+  pool.totalTokensStaked = event.params.totalStaked
   pool.lastRewardBlock = event.params.lastBlockNumber;
+
   pool.save();
 }

@@ -22,19 +22,19 @@ dataSources:
       abis:
         - name: ERC20LockUpFactory
           file: ./abis/ERC20LockUpFactory.json
-        - name: StakingPoolErc20
-          file: ./abis/StakingPoolErc20.json
+        - name: ERC20LockUpStakingPool
+          file: ./abis/ERC20LockUpStakingPool.json
       eventHandlers:
-        - event: CreateStakingPool(indexed address)
+        - event: CreateStakingPool(indexed address,indexed address,indexed address,uint256,uint256,uint256,address)
           handler: handleStakingPoolCreation
       file: ./src/factory.ts
 
 templates:
-  - name: StakingPoolErc20
+  - name: ERC20LockUpStakingPool
     kind: ethereum/contract
     network: mainnet
     source:
-      abi: StakingPoolErc20
+      abi: ERC20LockUpStakingPool
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -46,10 +46,10 @@ templates:
         - History
         - User
       abis:
-        - name: StakingPoolErc20
-          file: ./abis/StakingPoolErc20.json
+        - name: ERC20LockUpStakingPool
+          file: ./abis/ERC20LockUpStakingPool.json
       eventHandlers:
-        - event: ActivatePool()
+        - event: ActivatePool(uint256)
           handler: handleActivatePool
         - event: Claim(address,uint256)
           handler: handleClaim
