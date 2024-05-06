@@ -94,6 +94,6 @@ export function handleUpdatePool(event: PoolUpdateEvent): void {
   let pool = Pool.load(event.address.toHex())!;
   pool.accRewardPerShare = event.params.accumulatedRewardTokenPerShare;
   pool.totalStaked = event.params.totalStaked
-  pool.lastRewardTimestamp = event.params.lastBlockNumber;
+  pool.lastRewardTimestamp = event.params.lastBlockTimestamp;
   pool.save();
 }
