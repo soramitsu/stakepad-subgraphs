@@ -303,7 +303,7 @@
 		  {
 			"indexed": false,
 			"internalType": "uint256",
-			"name": "lastBlockNumber",
+			"name": "lastBlockTimestamp",
 			"type": "uint256"
 		  }
 		],

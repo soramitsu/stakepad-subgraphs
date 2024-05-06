@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "ERC20NoLockUpStakingPool",
-  "sourceName": "contracts/pools/ERC20NoLockUpStakingPool.sol",
+  "contractName": "ERC20PenaltyFeePool",
+  "sourceName": "contracts/pools/ERC20PenaltyFeePool.sol",
   "abi": [
     {
       "inputs": [
@@ -28,6 +28,11 @@
         {
           "internalType": "uint256",
           "name": "poolEndTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "penaltyPeriod",
           "type": "uint256"
         },
         {
@@ -85,6 +90,11 @@
     {
       "inputs": [],
       "name": "InvalidAmount",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidPenaltyPeriod",
       "type": "error"
     },
     {
@@ -166,6 +176,22 @@
       "type": "error"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "currentTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "unlockTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "TokensInLockup",
+      "type": "error"
+    },
+    {
       "anonymous": false,
       "inputs": [
         {
@@ -195,6 +221,19 @@
         }
       ],
       "name": "Claim",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "FeeClaim",
       "type": "event"
     },
     {
@@ -281,6 +320,32 @@
     },
     {
       "inputs": [],
+      "name": "COLLECTABLE_FEE",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "PENALTY_FEE",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "PRECISION_FACTOR",
       "outputs": [
         {
@@ -302,6 +367,13 @@
     {
       "inputs": [],
       "name": "claim",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "claimFee",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -343,59 +415,76 @@
       "name": "pool",
       "outputs": [
         {
-          "internalType": "address",
-          "name": "stakeToken",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "rewardToken",
-          "type": "address"
+          "components": [
+            {
+              "internalType": "address",
+              "name": "stakeToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "rewardToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "startTime",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "endTime",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "rewardTokenPerSecond",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalStaked",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalClaimed",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastRewardTimestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "accRewardPerShare",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "isActive",
+              "type": "bool"
+            },
+            {
+              "internalType": "address",
+              "name": "adminWallet",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct IERC20BasePool.BasePoolInfo",
+          "name": "baseInfo",
+          "type": "tuple"
         },
         {
           "internalType": "uint256",
-          "name": "startTime",
+          "name": "penaltyPeriod",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "endTime",
+          "name": "totalPenalties",
           "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "rewardTokenPerSecond",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "totalStaked",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "totalClaimed",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "lastRewardTimestamp",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "accRewardPerShare",
-          "type": "uint256"
-        },
-        {
-          "internalType": "bool",
-          "name": "isActive",
-          "type": "bool"
-        },
-        {
-          "internalType": "address",
-          "name": "adminWallet",
-          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -458,24 +547,41 @@
       "name": "userInfo",
       "outputs": [
         {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "claimed",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "rewardDebt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "pending",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct IERC20BasePool.BaseUserInfo",
+          "name": "baseInfo",
+          "type": "tuple"
         },
         {
           "internalType": "uint256",
-          "name": "claimed",
+          "name": "penaltyEndTime",
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "rewardDebt",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "pending",
-          "type": "uint256"
+          "internalType": "bool",
+          "name": "penalized",
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
