@@ -29,13 +29,13 @@ type Pool @entity {
   
   rewardTokenPerSecond: BigInt!
   
-  totalTokensStaked: BigInt!
+  totalStaked: BigInt!
   
-  totalTokensClaimed: BigInt!
+  totalClaimed: BigInt!
 
   accRewardPerShare: BigInt!
 
-  lastRewardBlock: BigInt!
+  lastRewardTimestamp: BigInt!
   
   isPoolActive: Boolean!
   
@@ -57,8 +57,6 @@ type History @entity {
   amount: BigInt!
 
   timestamp: BigInt!
-
-  transactionHash: Bytes!
 
   event_type: String!
 }
