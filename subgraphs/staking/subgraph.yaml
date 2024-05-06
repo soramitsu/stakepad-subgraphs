@@ -3,36 +3,82 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: ERC20LockUpFactory
-    network: mainnet
+    name: ERC20NoLockUpFactory
+    network: polygon-amoy
     source:
       address: "0xd1F2c510c5D8edDd9728451049Ae8260c4A5Bf6a"
-      abi: ERC20LockUpFactory
+      abi: ERC20NoLockUpStakingFactory
       startBlock: 0
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
+      file: ./src/factory.ts
       entities:
         - Factory
         - Token
         - Pool
-        - History
-        - User
       abis:
-        - name: ERC20LockUpFactory
-          file: ./abis/ERC20LockUpFactory.json
+        - name: ERC20NoLockUpStakingFactory
+          file: ./abis/ERC20NoLockUpStakingFactory.json
+        - name: ERC20NoLockUpStakingPool
+          file: ./abis/ERC20NoLockUpStakingPool.json
+      eventHandlers:
+        - event: CreateStakingPool(indexed address,indexed address,indexed address,uint256,uint256,uint256,address)
+          handler: handleStakingPoolCreation
+  - kind: ethereum/contract
+    name: ERC20LockUpFactory
+    network: polygon-amoy
+    source:
+      address: "0xd1F2c510c5D8edDd9728451049Ae8260c4A5Cf6a"
+      abi: ERC20LockUpStakingFactory
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/factory.ts
+      entities:
+        - Factory
+        - Token
+        - Pool
+      abis:
+        - name: ERC20LockUpStakingFactory
+          file: ./abis/ERC20LockUpStakingFactory.json
         - name: ERC20LockUpStakingPool
           file: ./abis/ERC20LockUpStakingPool.json
       eventHandlers:
         - event: CreateStakingPool(indexed address,indexed address,indexed address,uint256,uint256,uint256,address)
           handler: handleStakingPoolCreation
+  - kind: ethereum/contract
+    name: ERC20PenaltyFeeFactory
+    network: polygon-amoy
+    source:
+      address: "0xd1F2c510c5D8edDd9728451049Ae8260c4A5Df6a"
+      abi: ERC20PenaltyFeeStakingFactory
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
       file: ./src/factory.ts
+      entities:
+        - Factory
+        - Token
+        - Pool
+      abis:
+        - name: ERC20PenaltyFeeStakingFactory
+          file: ./abis/ERC20PenaltyFeeStakingFactory.json
+        - name: ERC20LockUpStakingPool
+          file: ./abis/ERC20LockUpStakingPool.json
+      eventHandlers:
+        - event: CreateStakingPool(indexed address,indexed address,indexed address,uint256,uint256,uint256,address)
+          handler: handleStakingPoolCreation
 
 templates:
   - name: ERC20LockUpStakingPool
     kind: ethereum/contract
-    network: mainnet
+    network: polygon-amoy
     source:
       abi: ERC20LockUpStakingPool
     mapping:
