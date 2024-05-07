@@ -25,7 +25,7 @@ dataSources:
           file: ./abis/ERC20NoLockUpStakingPool.json
       eventHandlers:
         - event: CreateStakingPool(indexed address,indexed address,indexed address,uint256,uint256,uint256,address)
-          handler: handleStakingPoolCreation
+          handler: handleLockUpStakingPoolCreation
   - kind: ethereum/contract
     name: ERC20LockUpFactory
     network: polygon-amoy
