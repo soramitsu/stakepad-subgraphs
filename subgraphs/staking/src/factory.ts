@@ -1,103 +1,123 @@
-import { Factory, Pool, Token } from "../generated/schema";
+import { Factory, Pool, Token, Request } from "../generated/schema";
 
 import { 
-  CreateStakingPool as LockUpStakingPoolEvent 
+  StakingPoolDeployed as LockUpPoolDeploymentEvent,
+  RequestSubmitted as LockUpPoolRequestSubmitted,
+  RequestStatusChanged as LockUpPoolStatusChanged
 } from "../generated/ERC20LockUpFactory/ERC20LockUpStakingFactory"
 
 import {
-  CreateStakingPool as NoLockUpStakingPoolEvent
-} from "../generated/ERC20NoLockUpFactory/ERC20NoLockUpStakingFactory"
-
-import {
-  CreateStakingPool as PenaltyFeeStakingPoolEvent
-} from "../generated/ERC20NoLockUpFactory/ERC20NoLockUpStakingFactory"
+  StakingPoolDeployed as PenaltyPoolDeploymentEvent,
+  RequestSubmitted as PenaltyPoolRequestSubmitted,
+  RequestStatusChanged as PenaltyPoolStatusChanged
+} from "../generated/ERC20PenaltyFeeFactory/ERC20PenaltyFeeStakingFactory"
 
 import { ERC20LockUpStakingPool as StakingPoolTemplate } from "../generated/templates";
 import { BigInt, log } from "@graphprotocol/graph-ts";
+import { fetchToken } from "../src/utils/token";
 
-export function handleLockUpStakingPoolCreation(event: LockUpStakingPoolEvent): void {
+export function handleStakingPoolDeployment(event: LockUpPoolDeploymentEvent): void {
   const factoryAddress = event.address.toHex();
-  const poolAddress = event.params.stakingAddress.toString();
-  const tokenAddress = event.params.stakeToken.toString();
-
-  let factory = Factory.load(factoryAddress);
-  if (factory === null) {
-    factory = new Factory(factoryAddress);
-    factory.totalPools = BigInt.fromI32(0);
-    factory.save();
-  }
-  factory.totalPools = factory.totalPools.plus(BigInt.fromI32(1));
-  factory.poolAddress.push(poolAddress);
-  factory.save();
-
-  let pool = new Pool(poolAddress);
-  pool.stakeToken = tokenAddress;
-  pool.startTime = event.block.timestamp;
-  pool.save();
-  
-  let token = Token.load(tokenAddress);
-  if (!token) {
-    token = new Token(tokenAddress);
-    token.save();
-  }
-
-  StakingPoolTemplate.create(event.params.stakingAddress);
-}
-
-export function handleNoLockUpStakingPoolCreation(event: NoLockUpStakingPoolEvent): void {
-  const factoryAddress = event.address.toHex();
-  const poolAddress = event.params.stakingAddress.toString();
-  const tokenAddress = event.params.stakeToken.toString();
+  const poolAddress = event.params.stakingAddress.toHex();
 
   let factory = Factory.load(factoryAddress);
   if (!factory) {
     factory = new Factory(factoryAddress);
     factory.totalPools = BigInt.fromI32(0);
-    factory.save();
+    factory.poolAddress = [];
   }
   factory.totalPools = factory.totalPools.plus(BigInt.fromI32(1));
   factory.poolAddress.push(poolAddress);
   factory.save();
 
-  let pool = new Pool(poolAddress);
-  pool.stakeToken = tokenAddress;
-  pool.startTime = event.block.timestamp;
-  pool.save();
-  
-  let token = Token.load(tokenAddress);
-  if (!token) {
-    token = new Token(tokenAddress);
-    token.save();
-  }
-
   StakingPoolTemplate.create(event.params.stakingAddress);
+
+  let request = Request.load(event.params.id.toString());
+  if (request) {
+    request.requestStatus = "DEPLOYED";
+    request.save();
+  }
 }
 
-export function handlePenaltyFeePoolCreation(event: PenaltyFeeStakingPoolEvent): void {
+export function handleLockUpPoolRequestSubmitted(event: LockUpPoolRequestSubmitted): void {
+  const requestId = event.params.id.toString();
+
+  let request = new Request(requestId);
+  request.deployer = event.params.deployer;
+  request.requestStatus = "CREATED";
+  request.stakeToken = event.params.data.stakeToken.toHex();
+  request.rewardToken = event.params.data.rewardToken.toHex();
+  request.rewardPerSecond = event.params.data.rewardPerSecond;
+  request.poolStartTime = event.params.data.poolStartTime;
+  request.poolEndTime = event.params.data.poolEndTime;
+  request.unstakeLockUpTime = event.params.data.unstakeLockUpTime;
+  request.claimLockUpTime = event.params.data.claimLockUpTime;
+  request.save();
+
+  fetchToken(event.params.data.stakeToken);
+  fetchToken(event.params.data.rewardToken);
+}
+
+export function handleLockUpPoolStatusChanged(event: LockUpPoolStatusChanged): void {
+  const requestId = event.params.id.toString();
+  let request = Request.load(requestId);
+  if (request) {
+    request.requestStatus = event.params.status.toString();
+    request.save();
+  } else {
+    log.warning("Request entity not found for id: {}", [requestId]);
+  }
+}
+
+export function handlePenaltyPoolDeployment(event: PenaltyPoolDeploymentEvent): void {
   const factoryAddress = event.address.toHex();
-  const poolAddress = event.params.stakingAddress.toString();
-  const tokenAddress = event.params.stakeToken.toString();
+  const poolAddress = event.params.stakingAddress.toHex();
 
   let factory = Factory.load(factoryAddress);
   if (!factory) {
     factory = new Factory(factoryAddress);
     factory.totalPools = BigInt.fromI32(0);
-    factory.save();
+    factory.poolAddress = [];
   }
   factory.totalPools = factory.totalPools.plus(BigInt.fromI32(1));
   factory.poolAddress.push(poolAddress);
   factory.save();
 
-  let pool = new Pool(poolAddress);
-  pool.stakeToken = tokenAddress;
-  pool.startTime = event.block.timestamp;
-  pool.save();
-  
-  let token = Token.load(tokenAddress);
-  if (!token) {
-    token = new Token(tokenAddress);
-    token.save();
-  }
-
   StakingPoolTemplate.create(event.params.stakingAddress);
+
+  let request = Request.load(event.params.id.toString());
+  if (request) {
+    request.requestStatus = "DEPLOYED";
+    request.save();
+  }
+}
+
+export function handlePenaltyPoolRequestSubmitted(event: PenaltyPoolRequestSubmitted): void {
+  const requestId = event.params.id.toString();
+
+  let request = new Request(requestId);
+  request.deployer = event.params.deployer;
+  request.requestStatus = "CREATED";
+  request.stakeToken = event.params.data.stakeToken.toHex();
+  request.rewardToken = event.params.data.rewardToken.toHex();
+  request.rewardPerSecond = event.params.data.rewardPerSecond;
+  request.poolStartTime = event.params.data.poolStartTime;
+  request.poolEndTime = event.params.data.poolEndTime;
+  request.penaltyPeriod = event.params.data.penaltyPeriod;
+  request.save();
+
+  fetchToken(event.params.data.stakeToken);
+  fetchToken(event.params.data.rewardToken);
+}
+
+export function handlePenaltyPoolStatusChanged(event: PenaltyPoolStatusChanged): void {
+  const requestId = event.params.id.toString();
+  let request = Request.load(requestId);
+
+  if (request) {
+    request.requestStatus = event.params.status.toString();
+    request.save();
+  } else {
+    log.warning("Request entity not found for id: {}", [requestId]);
+  }
 }

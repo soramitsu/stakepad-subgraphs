@@ -1,3 +1,35 @@
+enum RequestStatus {
+  CREATED
+  APPROVED
+  DENIED
+  CANCELED
+  DEPLOYED
+}
+
+type Request @entity {
+  id: ID!
+
+  deployer: Bytes!
+
+  requestStatus: RequestStatus!
+
+  stakeToken: Token!
+
+  rewardToken: Token!
+
+  rewardPerSecond: BigInt!
+
+  poolStartTime: BigInt!
+
+  poolEndTime: BigInt!
+
+  unstakeLockUpTime: BigInt
+
+  claimLockUpTime: BigInt
+
+  penaltyPeriod: BigInt
+}
+
 type Factory @entity {
   id: ID!
 

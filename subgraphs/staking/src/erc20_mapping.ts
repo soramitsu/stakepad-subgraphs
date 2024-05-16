@@ -2,12 +2,11 @@ import {
   Stake as StakeEvent,
   Unstake as UnstakeEvent,
   Claim as ClaimEvent,
-  ActivatePool as PoolActivationEvent,
   UpdatePool as PoolUpdateEvent
 } from "../generated/ERC20LockUpFactory/ERC20LockUpStakingPool"
 import { Pool, History } from "../generated/schema"
 import { getOrCreateUser } from "./utils/user";
-import { BigInt, log } from "@graphprotocol/graph-ts";
+import { BigInt } from "@graphprotocol/graph-ts";
 
 export function handleStake(event: StakeEvent): void {
   let user = getOrCreateUser(event.address, event.params.user);
@@ -82,12 +81,6 @@ export function handleClaim(event: ClaimEvent): void {
 
   pool.save();
   user.save();
-}
-
-export function handleActivatePool(event: PoolActivationEvent): void {
-  let pool = Pool.load(event.address.toHex())!;
-  pool.isPoolActive = true;
-  pool.save();
 }
 
 export function handleUpdatePool(event: PoolUpdateEvent): void {

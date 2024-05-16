@@ -1,5 +1,4 @@
-import { Address } from "@graphprotocol/graph-ts";
-import { BigInt } from "@graphprotocol/graph-ts";
+import { BigInt, Address } from "@graphprotocol/graph-ts";
 import { User } from "../../generated/schema";
 
 export function getOrCreateUser(poolAddress: Address, address: Address): User {
