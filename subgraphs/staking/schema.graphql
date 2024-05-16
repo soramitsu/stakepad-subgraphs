@@ -6,6 +6,12 @@ enum RequestStatus {
   DEPLOYED
 }
 
+enum EventType {
+  Stake
+  Unstake
+  Claim
+}
+
 type Request @entity {
   id: ID!
 
@@ -23,11 +29,11 @@ type Request @entity {
 
   poolEndTime: BigInt!
 
-  unstakeLockUpTime: BigInt
+  unstakeLockUpTime: BigInt!
 
-  claimLockUpTime: BigInt
+  claimLockUpTime: BigInt!
 
-  penaltyPeriod: BigInt
+  penaltyPeriod: BigInt!
 }
 
 type Factory @entity {
@@ -90,7 +96,7 @@ type History @entity {
 
   timestamp: BigInt!
 
-  event_type: String!
+  event_type: EventType!
 }
 
 type User @entity {

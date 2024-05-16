@@ -29,9 +29,9 @@ dataSources:
         - event: StakingPoolDeployed(indexed address,indexed uint256)
           handler: handleLockUpPoolDeployment
         - event: RequestSubmitted(indexed uint256,indexed address,indexed uint8,(address,address,uint256,uint256,uint256,uint256,uint256))
-          handler: handleLockUpRequestSubmitted
+          handler: handleLockUpPoolRequestSubmitted
         - event: RequestStatusChanged(indexed uint256,indexed uint8)
-          handler: handleLockUpStatusChanged
+          handler: handleLockUpPoolStatusChanged
 
   - kind: ethereum/contract
     name: ERC20PenaltyFeeFactory
