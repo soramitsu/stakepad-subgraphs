@@ -77,6 +77,7 @@ export function handleLockUpPoolRequestSubmitted(event: LockUpPoolRequestSubmitt
 export function handleLockUpPoolStatusChanged(event: LockUpPoolStatusChanged): void {
   const requestId = event.params.id.toString();
   let request = Request.load(requestId)!;
+  request.requestStatus = event.params.status.toString();
   request.save();
 }
 
@@ -141,5 +142,6 @@ export function handlePenaltyPoolRequestSubmitted(event: PenaltyPoolRequestSubmi
 export function handlePenaltyPoolStatusChanged(event: PenaltyPoolStatusChanged): void {
   const requestId = event.params.id.toString();
   let request = Request.load(requestId)!;
+  request.requestStatus = event.params.status.toString();
   request.save();
 }
