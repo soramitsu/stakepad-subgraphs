@@ -19,13 +19,14 @@ export function handleLockUpPoolRequestSubmitted(event: LockUpPoolRequestSubmitt
   const requestId = event.address.toHex() + "-" + event.params.id.toString();
 
   let request = new Request(requestId);
-  request.deployer = event.params.deployer;
-  request.requestStatus = "CREATED";
+  request.ipfsHash = event.params.ipfsHash.toHex();
+  request.deployer = event.params.deployer.toHex();
+  request.requestStatus = BigInt.fromI32(1);
   request.stakeToken = event.params.data.stakeToken.toHex();
   request.rewardToken = event.params.data.rewardToken.toHex();
-  request.rewardPerSecond = event.params.data.rewardPerSecond;
   request.poolStartTime = event.params.data.poolStartTime;
   request.poolEndTime = event.params.data.poolEndTime;
+  request.rewardPerSecond = event.params.data.rewardPerSecond;
   request.unstakeLockUpTime = event.params.data.unstakeLockUpTime;
   request.claimLockUpTime = event.params.data.claimLockUpTime;
   request.penaltyPeriod = BigInt.fromI32(0);
@@ -36,13 +37,13 @@ export function handlePenaltyPoolRequestSubmitted(event: PenaltyPoolRequestSubmi
   const requestId = event.address.toHex() + "-" + event.params.id.toString();
 
   let request = new Request(requestId);
-  request.deployer = event.params.deployer;
-  request.requestStatus = "CREATED";
+  request.deployer = event.params.deployer.toHex();
+  request.requestStatus = BigInt.fromI32(1);
   request.stakeToken = event.params.data.stakeToken.toHex();
   request.rewardToken = event.params.data.rewardToken.toHex();
-  request.rewardPerSecond = event.params.data.rewardPerSecond;
   request.poolStartTime = event.params.data.poolStartTime;
   request.poolEndTime = event.params.data.poolEndTime;
+  request.rewardPerSecond = event.params.data.rewardPerSecond;
   request.unstakeLockUpTime = BigInt.fromI32(0);
   request.claimLockUpTime = BigInt.fromI32(0);
   request.penaltyPeriod = event.params.data.penaltyPeriod;
@@ -60,7 +61,7 @@ export function handlePoolDeployment(
   factory.save();
 
   let request = Request.load(requestId)!;
-  request.requestStatus = "DEPLOYED";
+  request.requestStatus = BigInt.fromI32(4);
   request.save();
 
   let stakeToken = fetchToken(Address.fromString(request.stakeToken));
@@ -71,21 +72,24 @@ export function handlePoolDeployment(
   pool.rewardToken = rewardToken.id;
   pool.startTime = request.poolStartTime;
   pool.endTime = request.poolEndTime;
+  pool.unstakeLockUpTime = request.unstakeLockUpTime;
+  pool.claimLockUpTime = request.claimLockUpTime;
+  pool.penaltyPeriod = request.penaltyPeriod;
   pool.rewardTokenPerSecond = request.rewardPerSecond; // TODO COPY ALL REQUEST PARAMS, CREATE HELPER FUNCTION
   pool.totalStaked = BigInt.fromI32(0);
   pool.totalClaimed = BigInt.fromI32(0);
   pool.accRewardPerShare = BigInt.fromI32(0);
   pool.lastRewardTimestamp = request.poolStartTime;
-  pool.owner = event.transaction.from.toHex();
+  pool.owner = request.deployer;
   pool.save();
 
   StakingPoolTemplate.create(event.params.stakingAddress);
 }
 
-export function handleLockUpPoolStatusChanged(
+export function handlePoolStatusChanged(
   event: RequestStatusChanged): void {
   const requestId = event.address.toHex() + "-" + event.params.id.toString();
   let request = Request.load(requestId)!;
-  request.requestStatus = event.params.status.toString();
+  request.requestStatus = BigInt.fromI32(event.params.status);
   request.save();
 }

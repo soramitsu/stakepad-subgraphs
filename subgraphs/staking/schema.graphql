@@ -1,11 +1,3 @@
-enum RequestStatus {
-  CREATED
-  APPROVED
-  DENIED
-  CANCELED
-  DEPLOYED
-}
-
 enum EventType {
   Stake
   Unstake
@@ -15,19 +7,21 @@ enum EventType {
 type Request @entity {
   id: ID!
 
-  deployer: Bytes!
+  ipfsHash: String!
 
-  requestStatus: RequestStatus!
+  deployer: String!
+
+  requestStatus: BigInt!
 
   stakeToken: Token!
 
   rewardToken: Token!
 
-  rewardPerSecond: BigInt!
-
   poolStartTime: BigInt!
 
   poolEndTime: BigInt!
+
+  rewardPerSecond: BigInt!
 
   unstakeLockUpTime: BigInt!
 
@@ -64,6 +58,12 @@ type Pool @entity {
   startTime: BigInt!
   
   endTime: BigInt!
+
+  unstakeLockUpTime: BigInt!
+
+  claimLockUpTime: BigInt!
+
+  penaltyPeriod: BigInt!
   
   rewardTokenPerSecond: BigInt!
   
@@ -71,9 +71,9 @@ type Pool @entity {
   
   totalClaimed: BigInt!
 
-  accRewardPerShare: BigInt!
-
   lastRewardTimestamp: BigInt!
+
+  accRewardPerShare: BigInt!
 
   owner: String!
   

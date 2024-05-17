@@ -137,6 +137,12 @@
 				"type": "uint256"
 			},
 			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "ipfsHash",
+				"type": "bytes32"
+			},
+			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "deployer",
@@ -172,17 +178,17 @@
 					},
 					{
 						"internalType": "uint256",
+						"name": "rewardPerSecond",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
 						"name": "unstakeLockUpTime",
 						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
 						"name": "claimLockUpTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "rewardPerSecond",
 						"type": "uint256"
 					}
 				],
@@ -292,14 +298,26 @@
 			{
 				"components": [
 					{
-						"internalType": "address",
-						"name": "deployer",
-						"type": "address"
-					},
-					{
-						"internalType": "enum IBaseFactory.Status",
-						"name": "requestStatus",
-						"type": "uint8"
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "ipfsHash",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "address",
+								"name": "deployer",
+								"type": "address"
+							},
+							{
+								"internalType": "enum IBaseFactory.Status",
+								"name": "requestStatus",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct IBaseFactory.RequestInfo",
+						"name": "info",
+						"type": "tuple"
 					},
 					{
 						"components": [
@@ -325,17 +343,17 @@
 							},
 							{
 								"internalType": "uint256",
+								"name": "rewardPerSecond",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
 								"name": "unstakeLockUpTime",
 								"type": "uint256"
 							},
 							{
 								"internalType": "uint256",
 								"name": "claimLockUpTime",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "rewardPerSecond",
 								"type": "uint256"
 							}
 						],
@@ -344,7 +362,7 @@
 						"type": "tuple"
 					}
 				],
-				"internalType": "struct ILockUpFactory.Request[]",
+				"internalType": "struct ILockUpFactory.LockUpRequest[]",
 				"name": "reqs",
 				"type": "tuple[]"
 			}
@@ -394,6 +412,11 @@
 	{
 		"inputs": [
 			{
+				"internalType": "bytes32",
+				"name": "ipfsHash",
+				"type": "bytes32"
+			},
+			{
 				"components": [
 					{
 						"internalType": "address",
@@ -417,17 +440,17 @@
 					},
 					{
 						"internalType": "uint256",
+						"name": "rewardPerSecond",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
 						"name": "unstakeLockUpTime",
 						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
 						"name": "claimLockUpTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "rewardPerSecond",
 						"type": "uint256"
 					}
 				],
@@ -452,14 +475,26 @@
 		"name": "requests",
 		"outputs": [
 			{
-				"internalType": "address",
-				"name": "deployer",
-				"type": "address"
-			},
-			{
-				"internalType": "enum IBaseFactory.Status",
-				"name": "requestStatus",
-				"type": "uint8"
+				"components": [
+					{
+						"internalType": "bytes32",
+						"name": "ipfsHash",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "deployer",
+						"type": "address"
+					},
+					{
+						"internalType": "enum IBaseFactory.Status",
+						"name": "requestStatus",
+						"type": "uint8"
+					}
+				],
+				"internalType": "struct IBaseFactory.RequestInfo",
+				"name": "info",
+				"type": "tuple"
 			},
 			{
 				"components": [
@@ -485,17 +520,17 @@
 					},
 					{
 						"internalType": "uint256",
+						"name": "rewardPerSecond",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
 						"name": "unstakeLockUpTime",
 						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
 						"name": "claimLockUpTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "rewardPerSecond",
 						"type": "uint256"
 					}
 				],
