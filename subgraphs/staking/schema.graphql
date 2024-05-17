@@ -1,3 +1,35 @@
+enum EventType {
+  Stake
+  Unstake
+  Claim
+}
+
+type Request @entity {
+  id: ID!
+
+  ipfsHash: String!
+
+  deployer: String!
+
+  requestStatus: BigInt!
+
+  stakeToken: Token!
+
+  rewardToken: Token!
+
+  poolStartTime: BigInt!
+
+  poolEndTime: BigInt!
+
+  rewardPerSecond: BigInt!
+
+  unstakeLockUpTime: BigInt!
+
+  claimLockUpTime: BigInt!
+
+  penaltyPeriod: BigInt!
+}
+
 type Factory @entity {
   id: ID!
 
@@ -26,20 +58,22 @@ type Pool @entity {
   startTime: BigInt!
   
   endTime: BigInt!
+
+  unstakeLockUpTime: BigInt!
+
+  claimLockUpTime: BigInt!
+
+  penaltyPeriod: BigInt!
   
   rewardTokenPerSecond: BigInt!
   
-  totalTokensStaked: BigInt!
+  totalStaked: BigInt!
   
-  totalTokensClaimed: BigInt!
+  totalClaimed: BigInt!
+
+  lastRewardTimestamp: BigInt!
 
   accRewardPerShare: BigInt!
-
-  lastRewardBlock: BigInt!
-  
-  isPoolActive: Boolean!
-  
-  admin: String!
 
   owner: String!
   
@@ -58,9 +92,7 @@ type History @entity {
 
   timestamp: BigInt!
 
-  transactionHash: Bytes!
-
-  event_type: String!
+  event_type: EventType!
 }
 
 type User @entity {

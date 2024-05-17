@@ -1,0 +1,519 @@
+[
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [],
+		"name": "InvalidCaller",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "InvalidId",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "InvalidRequestStatus",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "InvalidRewardRate",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "InvalidTokenAddress",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "OwnableInvalidOwner",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "OwnableUnauthorizedAccount",
+		"type": "error"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "enum IBaseFactory.Status",
+				"name": "status",
+				"type": "uint8"
+			}
+		],
+		"name": "RequestStatusChanged",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "ipfsHash",
+				"type": "bytes32"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "deployer",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "enum IBaseFactory.Status",
+				"name": "status",
+				"type": "uint8"
+			},
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "stakeToken",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "rewardToken",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "poolStartTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "poolEndTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "rewardPerSecond",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "penaltyPeriod",
+						"type": "uint256"
+					}
+				],
+				"indexed": false,
+				"internalType": "struct IPenaltyFeeFactory.DeploymentData",
+				"name": "data",
+				"type": "tuple"
+			}
+		],
+		"name": "RequestSubmitted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "stakingAddress",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "StakingPoolDeployed",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "approveRequest",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "cancelRequest",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "denyRequest",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "deploy",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "newPoolAddress",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getPools",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "pools",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getRequests",
+		"outputs": [
+			{
+				"components": [
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "ipfsHash",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "address",
+								"name": "deployer",
+								"type": "address"
+							},
+							{
+								"internalType": "enum IBaseFactory.Status",
+								"name": "requestStatus",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct IBaseFactory.RequestInfo",
+						"name": "info",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "stakeToken",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "rewardToken",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "poolStartTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "poolEndTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "rewardPerSecond",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "penaltyPeriod",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct IPenaltyFeeFactory.DeploymentData",
+						"name": "data",
+						"type": "tuple"
+					}
+				],
+				"internalType": "struct IPenaltyFeeFactory.PenaltyFeeRequest[]",
+				"name": "reqs",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "poolById",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "pool",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "ipfsHash",
+				"type": "bytes32"
+			},
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "stakeToken",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "rewardToken",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "poolStartTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "poolEndTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "rewardPerSecond",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "penaltyPeriod",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct IPenaltyFeeFactory.DeploymentData",
+				"name": "data",
+				"type": "tuple"
+			}
+		],
+		"name": "requestDeployment",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "requests",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "bytes32",
+						"name": "ipfsHash",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "deployer",
+						"type": "address"
+					},
+					{
+						"internalType": "enum IBaseFactory.Status",
+						"name": "requestStatus",
+						"type": "uint8"
+					}
+				],
+				"internalType": "struct IBaseFactory.RequestInfo",
+				"name": "info",
+				"type": "tuple"
+			},
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "stakeToken",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "rewardToken",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "poolStartTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "poolEndTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "rewardPerSecond",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "penaltyPeriod",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct IPenaltyFeeFactory.DeploymentData",
+				"name": "data",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "stakingPools",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]

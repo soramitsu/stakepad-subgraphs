@@ -3,43 +3,38 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_stakeToken",
+				"name": "stakeToken",
 				"type": "address"
 			},
 			{
 				"internalType": "address",
-				"name": "_rewardToken",
+				"name": "rewardToken",
 				"type": "address"
 			},
 			{
 				"internalType": "uint256",
-				"name": "_rewardTokenPerSecond",
+				"name": "poolStartTime",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "_poolStartTime",
+				"name": "poolEndTime",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "_poolEndTime",
+				"name": "unstakeLockUp",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "_unstakeLockup",
+				"name": "claimLockUp",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "_claimLockup",
+				"name": "rewardTokenPerSecond",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_adminAddress",
-				"type": "address"
 			}
 		],
 		"stateMutability": "nonpayable",
@@ -76,7 +71,12 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "amount",
+				"name": "reqAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "currentAmount",
 				"type": "uint256"
 			}
 		],
@@ -85,12 +85,12 @@
 	},
 	{
 		"inputs": [],
-		"name": "InvalidInput",
+		"name": "InvalidAmount",
 		"type": "error"
 	},
 	{
 		"inputs": [],
-		"name": "InvalidLockupTime",
+		"name": "InvalidLockUpTime",
 		"type": "error"
 	},
 	{
@@ -100,7 +100,12 @@
 	},
 	{
 		"inputs": [],
-		"name": "NotAdmin",
+		"name": "InvalidStartTime",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NothingToClaim",
 		"type": "error"
 	},
 	{
@@ -127,12 +132,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "PoolIsActive",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "PoolNotActive",
+		"name": "PoolHasEnded",
 		"type": "error"
 	},
 	{
@@ -169,20 +169,14 @@
 				"type": "uint256"
 			}
 		],
-		"name": "TokensInLockup",
+		"name": "TokensInLockUp",
 		"type": "error"
-	},
-	{
-		"anonymous": false,
-		"inputs": [],
-		"name": "ActivatePool",
-		"type": "event"
 	},
 	{
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "user",
 				"type": "address"
@@ -220,7 +214,7 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "user",
 				"type": "address"
@@ -239,7 +233,7 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "user",
 				"type": "address"
@@ -272,7 +266,7 @@
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "lastBlockNumber",
+				"name": "lastBlockTimestamp",
 				"type": "uint256"
 			}
 		],
@@ -281,9 +275,15 @@
 	},
 	{
 		"inputs": [],
-		"name": "activate",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"name": "PRECISION_FACTOR",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -310,7 +310,7 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_userAddress",
+				"name": "userAddress",
 				"type": "address"
 			}
 		],
@@ -330,12 +330,12 @@
 		"name": "pool",
 		"outputs": [
 			{
-				"internalType": "contract IERC20",
+				"internalType": "address",
 				"name": "stakeToken",
 				"type": "address"
 			},
 			{
-				"internalType": "contract IERC20",
+				"internalType": "address",
 				"name": "rewardToken",
 				"type": "address"
 			},
@@ -351,12 +351,12 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "unstakeLockupTime",
+				"name": "unstakeLockUpTime",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "claimLockupTime",
+				"name": "claimLockUpTime",
 				"type": "uint256"
 			},
 			{
@@ -376,23 +376,13 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "lastRewardTimestamp",
+				"name": "lastUpdateTimestamp",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
 				"name": "accRewardPerShare",
 				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "isActive",
-				"type": "bool"
-			},
-			{
-				"internalType": "address",
-				"name": "adminWallet",
-				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -409,7 +399,7 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_amount",
+				"name": "amount",
 				"type": "uint256"
 			}
 		],
@@ -435,13 +425,47 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_amount",
+				"name": "amount",
 				"type": "uint256"
 			}
 		],
 		"name": "unstake",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "userInfo",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "claimed",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "rewardDebt",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "pending",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	}
 ]

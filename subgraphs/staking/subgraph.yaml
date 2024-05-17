@@ -4,58 +4,91 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: ERC20LockUpFactory
-    network: mainnet
+    network: polygon-amoy
     source:
-      address: "0xd1F2c510c5D8edDd9728451049Ae8260c4A5Bf6a"
-      abi: ERC20LockUpFactory
+      address: "0xd1F2c510c5D8edDd9728451049Ae8260c4A5Cf6a"
+      abi: ERC20LockUpStakingFactory
       startBlock: 0
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.8
       language: wasm/assemblyscript
+      file: ./src/factory.ts
       entities:
         - Factory
         - Token
         - Pool
-        - History
-        - User
+        - Request
       abis:
-        - name: ERC20LockUpFactory
-          file: ./abis/ERC20LockUpFactory.json
-        - name: StakingPoolErc20
-          file: ./abis/StakingPoolErc20.json
+        - name: ERC20LockUpStakingFactory
+          file: ./abis/ERC20LockUpStakingFactory.json
+        - name: ERC20LockUpStakingPool
+          file: ./abis/ERC20LockUpStakingPool.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
-        - event: CreateStakingPool(indexed address)
-          handler: handleStakingPoolCreation
-      file: ./src/factory.ts
+        - event: StakingPoolDeployed(indexed address,indexed uint256)
+          handler: handlePoolDeployment
+        - event: RequestSubmitted(indexed uint256,bytes32,indexed address,indexed uint8,(address,address,uint256,uint256,uint256,uint256,uint256))
+          handler: handleLockUpPoolRequestSubmitted
+        - event: RequestStatusChanged(indexed uint256,indexed uint8)
+          handler: handlePoolStatusChanged
 
-templates:
-  - name: StakingPoolErc20
-    kind: ethereum/contract
-    network: mainnet
+  - kind: ethereum/contract
+    name: ERC20PenaltyFeeFactory
+    network: polygon-amoy
     source:
-      abi: StakingPoolErc20
+      address: "0xd1F2c510c5D8edDd9728451049Ae8260c4A5Df6a"
+      abi: ERC20PenaltyFeeStakingFactory
+      startBlock: 0
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.8
       language: wasm/assemblyscript
-      file: ./src/erc20_mapping.ts
+      file: ./src/factory.ts
+      entities:
+        - Factory
+        - Token
+        - Pool
+        - Request
+      abis:
+        - name: ERC20PenaltyFeeStakingFactory
+          file: ./abis/ERC20PenaltyFeeStakingFactory.json
+        - name: ERC20LockUpStakingPool
+          file: ./abis/ERC20LockUpStakingPool.json
+      eventHandlers:
+        - event: StakingPoolDeployed(indexed address,indexed uint256)
+          handler: handlePoolDeployment
+        - event: RequestSubmitted(indexed uint256,bytes32,indexed address,indexed uint8,(address,address,uint256,uint256,uint256,uint256))
+          handler: handlePenaltyPoolRequestSubmitted
+        - event: RequestStatusChanged(indexed uint256,indexed uint8)
+          handler: handlePoolStatusChanged
+
+templates:
+  - name: ERC20LockUpStakingPool
+    kind: ethereum/contract
+    network: polygon-amoy
+    source:
+      abi: ERC20LockUpStakingPool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.8
+      language: wasm/assemblyscript
+      file: ./src/pool.ts
       entities:
         - Token
         - Pool
         - History
         - User
       abis:
-        - name: StakingPoolErc20
-          file: ./abis/StakingPoolErc20.json
+        - name: ERC20LockUpStakingPool
+          file: ./abis/ERC20LockUpStakingPool.json
       eventHandlers:
-        - event: ActivatePool()
-          handler: handleActivatePool
-        - event: Claim(address,uint256)
+        - event: Claim(indexed address,uint256)
           handler: handleClaim
-        - event: Stake(address,uint256)
+        - event: Stake(indexed address,uint256)
           handler: handleStake
-        - event: Unstake(address,uint256)
+        - event: Unstake(indexed address,uint256)
           handler: handleUnstake
         - event: UpdatePool(uint256,uint256,uint256)
           handler: handleUpdatePool
