@@ -73,11 +73,9 @@ export function handleClaim(event: ClaimEvent): void {
     user.rewardDebt = user.amount.times(pool.accRewardPerShare)
   }
 
-  if (user.pending.gt(BigInt.fromI32(0))) {
-    user.pending = BigInt.fromI32(0);
-    user.claimed = user.claimed.plus(user.pending);
-    pool.totalClaimed = pool.totalClaimed.plus(user.pending);
-  }
+  user.pending = BigInt.fromI32(0);
+  user.claimed = user.claimed.plus(event.params.amount);
+  pool.totalClaimed = pool.totalClaimed.plus(event.params.amount);
 
   pool.save();
   user.save();
