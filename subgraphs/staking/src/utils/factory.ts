@@ -1,8 +1,8 @@
 import { BigInt, Address } from "@graphprotocol/graph-ts";
 import { Factory } from "../../generated/schema";
 
-export function getOrCreateFactory(factoryAddress: Address, address: Address): Factory {
-    const id = factoryAddress.toHex() + "-" + address.toHex();
+export function getOrCreateFactory(factoryAddress: Address): Factory {
+    const id = factoryAddress.toHex();
 
     let factory = Factory.load(id);
     if (factory === null) {
