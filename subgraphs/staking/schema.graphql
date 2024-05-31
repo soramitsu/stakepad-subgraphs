@@ -2,6 +2,7 @@ enum EventType {
   Stake
   Unstake
   Claim
+  PenaltyClaim
 }
 
 type Request @entity {
@@ -64,6 +65,8 @@ type Pool @entity {
   claimLockUpTime: BigInt!
 
   penaltyPeriod: BigInt!
+
+  totalPenalties: BigInt!
   
   rewardTokenPerSecond: BigInt!
   

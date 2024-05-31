@@ -4,6 +4,11 @@ import {
   Claim as ClaimEvent,
   UpdatePool as PoolUpdateEvent
 } from "../generated/ERC20LockUpFactory/ERC20LockUpStakingPool"
+
+import {
+  PenaltyClaim as PenaltyClaimEvent
+} from "../generated/templates/ERC20PenaltyFeePool/ERC20PenaltyFeePool"
+
 import { Pool, History } from "../generated/schema"
 import { getOrCreateUser } from "./utils/user";
 import { BigInt } from "@graphprotocol/graph-ts";
@@ -76,6 +81,33 @@ export function handleClaim(event: ClaimEvent): void {
   user.pending = BigInt.fromI32(0);
   user.claimed = user.claimed.plus(event.params.amount);
   pool.totalClaimed = pool.totalClaimed.plus(event.params.amount);
+
+  pool.save();
+  user.save();
+}
+
+export function handlePenaltyClaim(event: PenaltyClaimEvent): void {
+  let user = getOrCreateUser(event.address, event.params.user);
+  let pool = Pool.load(event.address.toHex())!;
+  let history = new History(event.transaction.hash.toHex());
+
+  history.user = user.id;
+  history.pool = pool.id;
+  history.amount = user.pending;
+  history.timestamp = event.block.timestamp;
+  history.event_type = "PenaltyClaim";
+  history.save();
+
+  if (user.amount.gt(BigInt.fromI32(0))) {
+    user.pending = user.pending.plus(user.amount.times(pool.accRewardPerShare))
+      .minus(user.rewardDebt)
+    user.rewardDebt = user.amount.times(pool.accRewardPerShare)
+  }
+
+  user.pending = BigInt.fromI32(0);
+  user.claimed = user.claimed.plus(event.params.amount);
+  pool.totalClaimed = pool.totalClaimed.plus(event.params.amount);
+  pool.totalPenalties = pool.totalPenalties.plus(event.params.penalityAmount);
 
   pool.save();
   user.save();

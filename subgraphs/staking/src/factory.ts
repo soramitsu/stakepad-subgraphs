@@ -50,8 +50,7 @@ export function handlePenaltyPoolRequestSubmitted(event: PenaltyPoolRequestSubmi
   request.save();
 }
 
-export function handlePoolDeployment(
-  event: StakingPoolDeployed): void {
+export function handlePoolDeployment(event: StakingPoolDeployed): void {
   const poolAddress = event.params.stakingAddress.toHex();
   const requestId = event.address.toHex() + "-" + event.params.id.toString();
 
@@ -86,8 +85,7 @@ export function handlePoolDeployment(
   StakingPoolTemplate.create(event.params.stakingAddress);
 }
 
-export function handlePoolStatusChanged(
-  event: RequestStatusChanged): void {
+export function handlePoolStatusChanged(event: RequestStatusChanged): void {
   const requestId = event.address.toHex() + "-" + event.params.id.toString();
   let request = Request.load(requestId)!;
   request.requestStatus = BigInt.fromI32(event.params.status);
