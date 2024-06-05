@@ -92,3 +92,25 @@ templates:
           handler: handleUnstake
         - event: UpdatePool(uint256,uint256,uint256)
           handler: handleUpdatePool
+
+  - name: ERC20PenaltyFeePool
+    kind: ethereum/contract
+    network: polygon-amoy
+    source:
+      abi: ERC20PenaltyFeePool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.8
+      language: wasm/assemblyscript
+      file: ./src/pool.ts
+      entities:
+        - Token
+        - Pool
+        - History
+        - User
+      abis:
+        - name: ERC20PenaltyFeePool
+          file: ./abis/ERC20PenaltyFeePool.json
+      eventHandlers:
+        - event: PenaltyClaim(indexed address,uint256,uint256,uint256)
+          handler: handlePenaltyClaim
