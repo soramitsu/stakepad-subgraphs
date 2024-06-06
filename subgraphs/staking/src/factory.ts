@@ -12,8 +12,8 @@ import {
 
 import { ERC20LockUpStakingPool as StakingPoolTemplate } from "../generated/templates";
 import { BigInt, Address } from "@graphprotocol/graph-ts";
-import { fetchToken } from "../src/utils/token";
-import { getOrCreateFactory } from "../src/utils/factory";
+import { fetchToken } from "./utils/token";
+import { getOrCreateFactory } from "./utils/factory";
 
 export function handleLockUpPoolRequestSubmitted(event: LockUpPoolRequestSubmitted): void {
   const requestId = event.address.toHex() + "-" + event.params.id.toString();

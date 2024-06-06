@@ -64,6 +64,68 @@ dataSources:
         - event: RequestStatusChanged(indexed uint256,indexed uint8)
           handler: handlePoolStatusChanged
 
+  - kind: ethereum/contract
+    name: ERC721LockUpFactory
+    network: polygon-amoy
+    source:
+      address: "0xd1F2c510c5D8edDd9728451049Ae8260c4A5Df6a"
+      abi: ERC721LockUpStakingFactory
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.8
+      language: wasm/assemblyscript
+      file: ./src/factory.ts
+      entities:
+        - Factory
+        - Token
+        - Pool
+        - Request
+      abis:
+        - name: ERC721LockUpStakingFactory
+          file: ./abis/ERC721LockUpStakingFactory.json
+        - name: ERC721LockUpStakingPool
+          file: ./abis/ERC721LockUpStakingPool.json
+        - name: ERC721
+          file: ./abis/ERC721.json
+      eventHandlers:
+        - event: StakingPoolDeployed(indexed address,indexed uint256)
+          handler: handleERC721PoolDeployment
+        - event: RequestSubmitted(indexed uint256,indexed address,indexed uint8,(address,address,uint256,uint256,uint256,uint256,uint256))
+          handler: handleERC721LockUpPoolRequestSubmitted
+        - event: RequestStatusChanged(indexed uint256,indexed uint8)
+          handler: handleERC721PoolStatusChanged
+
+  - kind: ethereum/contract
+    name: ERC721PenaltyFeeFactory
+    network: polygon-amoy
+    source:
+      address: "0xd1F2c510c5D8edDd9728451049Ae8260c4A5Df6a"
+      abi: ERC721PenaltyFeeStakingFactory
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.8
+      language: wasm/assemblyscript
+      file: ./src/factory.ts
+      entities:
+        - Factory
+        - Token
+        - Pool
+        - Request
+      abis:
+        - name: ERC721PenaltyFeeStakingFactory
+          file: ./abis/ERC721PenaltyFeeStakingFactory.json
+        - name: ERC721PenaltyFeePool
+          file: ./abis/ERC721PenaltyFeePool.json
+      eventHandlers:
+        - event: StakingPoolDeployed(indexed address,indexed uint256)
+          handler: handleERC721PoolDeployment
+        - event: RequestSubmitted(indexed uint256,indexed address,indexed uint8,(address,address,uint256,uint256,uint256,uint256))
+          handler: handleERC721PenaltyPoolRequestSubmitted
+        - event: RequestStatusChanged(indexed uint256,indexed uint8)
+          handler: handleERC721PoolStatusChanged
+
 templates:
   - name: ERC20LockUpStakingPool
     kind: ethereum/contract

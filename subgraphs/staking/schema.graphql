@@ -49,6 +49,16 @@ type Token @entity(immutable: true) {
   decimals: BigInt!
 }
 
+type NFToken @entity(immutable: true) {
+  id: ID!
+ 
+  tokenId: String!
+ 
+  owner: User!
+ 
+  pool: Pool!
+}
+
 type Pool @entity {
   id: ID!
 
@@ -82,6 +92,9 @@ type Pool @entity {
   
   # List of users participating in the pool
   users: [History!]! @derivedFrom(field: "pool")
+
+  # List of NFTs staked in the pool
+  nftokens: [NFToken!]! @derivedFrom(field: "pool")
 }
 
 type History @entity {
@@ -92,6 +105,8 @@ type History @entity {
   pool: Pool!
 
   amount: BigInt!
+
+  tokenIds: [String!]
 
   timestamp: BigInt!
 
@@ -112,4 +127,6 @@ type User @entity {
   address: Bytes!
  
   pools: [History!]! @derivedFrom(field: "user")
+
+  nftokens: [NFToken!]! @derivedFrom(field: "owner")
 }
