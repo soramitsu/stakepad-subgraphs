@@ -75,7 +75,7 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.8
       language: wasm/assemblyscript
-      file: ./src/factory.ts
+      file: ./src/nft_factory.ts
       entities:
         - Factory
         - Token
@@ -107,7 +107,7 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.8
       language: wasm/assemblyscript
-      file: ./src/factory.ts
+      file: ./src/nft_factory.ts
       entities:
         - Factory
         - Token
@@ -176,3 +176,31 @@ templates:
       eventHandlers:
         - event: PenaltyClaim(indexed address,uint256,uint256,uint256)
           handler: handlePenaltyClaim
+  
+  - name: ERC721LockUpStakingPool
+    kind: ethereum/contract
+    network: polygon-amoy
+    source:
+      abi: ERC721LockUpStakingPool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.8
+      language: wasm/assemblyscript
+      file: ./src/nft_pool.ts
+      entities:
+        - Token
+        - Pool
+        - History
+        - User
+      abis:
+        - name: ERC721LockUpStakingPool
+          file: ./abis/ERC721LockUpStakingPool.json
+      eventHandlers:
+        - event: Claim(indexed address,uint256)
+          handler: handleClaim
+        - event: Stake(indexed address,indexed uint256[])
+          handler: handleStake
+        - event: Unstake(indexed address,indexed uint256[])
+          handler: handleUnstake
+        - event: UpdatePool(indexed uint256,indexed uint256,uint256)
+          handler: handleUpdatePool
