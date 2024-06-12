@@ -6,7 +6,12 @@ import {
   Claim as ClaimEvent,
   UpdatePool as PoolUpdateEvent
 } from "../generated/ERC20LockUpFactory/ERC20LockUpStakingPool";
-import { handleStake, handleUnstake, handleClaim, handleUpdatePool } from "../src/pool";
+
+import {
+  PenaltyClaim as PenaltyClaimEvent
+} from "../generated/templates/ERC20PenaltyFeePool/ERC20PenaltyFeePool"
+
+import { handleStake, handleUnstake, handleClaim, handlePenaltyClaim, handleUpdatePool } from "../src/pool";
 import { getOrCreateUser } from "../src/utils/user";
 import { Pool, User } from "../generated/schema";
 
@@ -75,6 +80,39 @@ function createClaimEvent(userAddress: Address, amount: BigInt): ClaimEvent {
 
   newEvent.parameters.push(userParam);
   newEvent.parameters.push(amountParam);
+
+  return newEvent;
+}
+
+function createPenaltyClaimEvent(
+  userAddress: Address,
+  amount: BigInt,
+  penaltyAmount: BigInt,
+  totalPenalties: BigInt,
+): PenaltyClaimEvent {
+  let mockEvent = newMockEvent();
+  let newEvent = new PenaltyClaimEvent(
+    mockEvent.address,
+    mockEvent.logIndex,
+    mockEvent.transactionLogIndex,
+    mockEvent.logType,
+    mockEvent.block,
+    mockEvent.transaction,
+    mockEvent.parameters,
+    null
+  );
+
+  newEvent.parameters = new Array();
+
+  let userAddressParam = new ethereum.EventParam("user",ethereum.Value.fromAddress(userAddress))
+  let amountParam = new ethereum.EventParam("amount", ethereum.Value.fromUnsignedBigInt(amount))
+  let penaltyAmountParam = new ethereum.EventParam("penaltyAmount", ethereum.Value.fromUnsignedBigInt(penaltyAmount))
+  let totalPenaltiesParam = new ethereum.EventParam("totalPenalties", ethereum.Value.fromUnsignedBigInt(totalPenalties))
+
+  newEvent.parameters.push(userAddressParam)
+  newEvent.parameters.push(amountParam)
+  newEvent.parameters.push(penaltyAmountParam)
+  newEvent.parameters.push(totalPenaltiesParam)
 
   return newEvent;
 }
@@ -191,13 +229,46 @@ describe("ERC20LockUpStakingPool", () => {
     assert.fieldEquals("Pool", pool.id, "totalClaimed", amount.toString());
   });
 
-  test("handleUpdatePool updates the Pool entity", () => {
+  test("handlePenaltyClaim updates User, Pool, and History entities", () => {
+    let poolAddress = Address.fromString("0x0000000000000000000000000000000000000001")
+    let userAddress = Address.fromString("0x0000000000000000000000000000000000000002")
+    let amount = BigInt.fromI32(130);
+    let penalityAmount = BigInt.fromI32(10);
+    let totalPenalties = BigInt.fromI32(0);
+
+    let user = new User(userAddress.toHex() + "-" + poolAddress.toHex());  
+    user.pending = BigInt.fromI32(85)
+    user.amount = BigInt.fromI32(30)
+    user.rewardDebt = BigInt.fromI32(20)
+    user.claimed = BigInt.fromI32(0)
+    user.save()
+  
+    let event = createPenaltyClaimEvent(userAddress, amount, penalityAmount, totalPenalties)
+  
+    handlePenaltyClaim(event)
+  
+    assert.fieldEquals("User", userAddress.toHex(), "pending", user.pending.toString())
+    assert.fieldEquals("User", userAddress.toHex(), "claimed", user.claimed.toString())
+    assert.fieldEquals("User", userAddress.toHex(), "rewardDebt", user.rewardDebt.toString())
+    assert.fieldEquals("User", userAddress.toHex(), "amount", user.amount.toString())
+  
+    assert.fieldEquals("History", event.transaction.hash.toHex(), "user", userAddress.toHex())
+    assert.fieldEquals("History", event.transaction.hash.toHex(), "pool", poolAddress.toHex())
+    assert.fieldEquals("History", event.transaction.hash.toHex(), "amount", amount.toString())
+    assert.fieldEquals("History", event.transaction.hash.toHex(), "event_type", "PenaltyClaim")
+
+    let pool = Pool.load(poolAddress.toHex())!;
+    assert.fieldEquals("Pool", poolAddress.toHex(), "totalClaimed", pool.totalClaimed.toString())
+    assert.fieldEquals("Pool", poolAddress.toHex(), "totalPenalties", pool.totalPenalties.toString())
+})
+
+test("handleUpdatePool updates the Pool entity", () => {
     let poolAddress = Address.fromString("0x0000000000000000000000000000000000000001");
     let accRewardPerShare = BigInt.fromI32(10);
     let totalStaked = BigInt.fromI32(1000);
     let lastBlockTimestamp = BigInt.fromI32(1625130800);
 
-    let poolUpdateEvent = createPoolUpdateEvent(poolAddress, accRewardPerShare, totalStaked, lastBlockTimestamp);
+    let poolUpdateEvent = createPoolUpdateEvent(accRewardPerShare, totalStaked, lastBlockTimestamp);
     handleUpdatePool(poolUpdateEvent);
 
     let pool = Pool.load(poolAddress.toHex())!;
