@@ -1,8 +1,9 @@
 enum EventType {
   Stake
+  NFTStake
   Unstake
+  NFTUnstake
   Claim
-  PenaltyClaim
 }
 
 type Request @entity {
@@ -63,6 +64,8 @@ type Pool @entity {
   id: ID!
 
   stakeToken: Token!
+
+  stakeNFToken: NFToken!
   
   rewardToken: Token!
   
@@ -92,9 +95,6 @@ type Pool @entity {
   
   # List of users participating in the pool
   users: [History!]! @derivedFrom(field: "pool")
-
-  # List of NFTs staked in the pool
-  nftokens: [NFToken!]! @derivedFrom(field: "pool")
 }
 
 type History @entity {
