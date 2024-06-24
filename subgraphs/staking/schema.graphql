@@ -1,8 +1,9 @@
 enum EventType {
   Stake
+  NFTStake
   Unstake
+  NFTUnstake
   Claim
-  PenaltyClaim
 }
 
 type Request @entity {
@@ -49,10 +50,22 @@ type Token @entity(immutable: true) {
   decimals: BigInt!
 }
 
+type NFToken @entity(immutable: true) {
+  id: ID!
+ 
+  tokenId: String!
+ 
+  owner: User!
+ 
+  pool: Pool!
+}
+
 type Pool @entity {
   id: ID!
 
   stakeToken: Token!
+
+  stakeNFToken: NFToken!
   
   rewardToken: Token!
   
@@ -93,6 +106,8 @@ type History @entity {
 
   amount: BigInt!
 
+  tokenIds: [String!]
+
   timestamp: BigInt!
 
   event_type: EventType!
@@ -112,4 +127,6 @@ type User @entity {
   address: Bytes!
  
   pools: [History!]! @derivedFrom(field: "user")
+
+  nftokens: [NFToken!]! @derivedFrom(field: "owner")
 }

@@ -28,13 +28,13 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "penaltyPeriod",
+				"name": "unstakeLockUpTime",
 				"type": "uint256"
 			},
 			{
-				"internalType": "address",
-				"name": "adminAddress",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "claimLockUpTime",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "nonpayable",
@@ -60,22 +60,6 @@
 			}
 		],
 		"name": "AddressInsufficientBalance",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "currentTime",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "unlockTime",
-				"type": "uint256"
-			}
-		],
-		"name": "ClaimInLockUp",
 		"type": "error"
 	},
 	{
@@ -106,7 +90,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "InvalidPenaltyPeriod",
+		"name": "InvalidLockUpTime",
 		"type": "error"
 	},
 	{
@@ -121,7 +105,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "NotAdmin",
+		"name": "NotStaker",
 		"type": "error"
 	},
 	{
@@ -178,6 +162,22 @@
 		"type": "error"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "currentTime",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "unlockTime",
+				"type": "uint256"
+			}
+		],
+		"name": "TokensInLockUp",
+		"type": "error"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -189,7 +189,7 @@
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "amount",
+				"name": "pending",
 				"type": "uint256"
 			},
 			{
@@ -206,19 +206,6 @@
 			}
 		],
 		"name": "Claim",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "FeeClaim",
 		"type": "event"
 	},
 	{
@@ -250,10 +237,10 @@
 				"type": "address"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
+				"indexed": true,
+				"internalType": "uint256[]",
+				"name": "tokenIds",
+				"type": "uint256[]"
 			}
 		],
 		"name": "Stake",
@@ -269,10 +256,10 @@
 				"type": "address"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
+				"indexed": true,
+				"internalType": "uint256[]",
+				"name": "tokenIds",
+				"type": "uint256[]"
 			}
 		],
 		"name": "Unstake",
@@ -282,13 +269,13 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "totalStaked",
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "accumulatedRewardTokenPerShare",
 				"type": "uint256"
@@ -296,38 +283,12 @@
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "lastBlockTimestamp",
+				"name": "lastBlockNumber",
 				"type": "uint256"
 			}
 		],
 		"name": "UpdatePool",
 		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "COLLECTABLE_FEE",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "PENALTY_FEE",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
 	},
 	{
 		"inputs": [],
@@ -345,13 +306,6 @@
 	{
 		"inputs": [],
 		"name": "claim",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "claimFee",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -414,7 +368,12 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "penaltyPeriod",
+				"name": "unstakeLockUpTime",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "claimLockUpTime",
 				"type": "uint256"
 			},
 			{
@@ -434,11 +393,6 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "totalPenalties",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "lastUpdateTimestamp",
 				"type": "uint256"
 			},
@@ -446,11 +400,6 @@
 				"internalType": "uint256",
 				"name": "accRewardPerShare",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "adminWallet",
-				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -466,9 +415,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
+				"internalType": "uint256[]",
+				"name": "tokenIds",
+				"type": "uint256[]"
 			}
 		],
 		"name": "stake",
@@ -492,9 +441,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
+				"internalType": "uint256[]",
+				"name": "tokenIds",
+				"type": "uint256[]"
 			}
 		],
 		"name": "unstake",
@@ -531,16 +480,6 @@
 				"internalType": "uint256",
 				"name": "pending",
 				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "penaltyEndTime",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "penalized",
-				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
