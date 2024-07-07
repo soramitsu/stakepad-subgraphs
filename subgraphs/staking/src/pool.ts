@@ -13,6 +13,14 @@ import { Pool, History } from "../generated/schema"
 import { getOrCreateUser } from "./utils/user";
 import { BigInt } from "@graphprotocol/graph-ts";
 
+/**
+ * Handles the `Stake` event emitted by the ERC20 StakingPool contract.
+ * 
+ * Indexing the staking event, updating the user's staked amount, 
+ * pending rewards, and the pool's total staked amount. 
+ *
+ * @param event - Stake event contains the user address and amount staked.
+ */
 export function handleStake(event: StakeEvent): void {
   let user = getOrCreateUser(event.address, event.params.user);
   let pool = Pool.load(event.address.toHex())!;
@@ -37,6 +45,14 @@ export function handleStake(event: StakeEvent): void {
   user.save();
 }
 
+/**
+ * Handles the `Unstake` event emitted by the ERC20 StakingPool contract.
+ * 
+ * Indexing the unstaking event, updating the user's staked amount, 
+ * pending rewards, and the pool's total staked amount. 
+ *
+ * @param event - Unstake event contains the user address and amount unstaked.
+ */
 export function handleUnstake(event: UnstakeEvent): void {
   let user = getOrCreateUser(event.address, event.params.user);
   let pool = Pool.load(event.address.toHex())!;
@@ -60,6 +76,14 @@ export function handleUnstake(event: UnstakeEvent): void {
   user.save();
 }
 
+/**
+ * Handles the `Claim` event emitted by the ERC20 StakingPool contract.
+ * 
+ * Indexing the claim event, updating the user's pending rewards, 
+ * claimed rewards, the pool's total claimed rewards and penalties. 
+ *
+ * @param event - Claim event contains the user address and claimed amount.
+ */
 export function handleClaim(event: ClaimEvent): void {
   let user = getOrCreateUser(event.address, event.params.user);
   let pool = Pool.load(event.address.toHex())!;
@@ -113,6 +137,14 @@ export function handlePenaltyClaim(event: PenaltyClaimEvent): void {
   user.save();
 }
 
+/**
+ * Handles the `UpdatePool` event emitted by the ERC20 StakingPool contract.
+ * 
+ * Indexing the pool update event, updating the pool's accumulated reward per share,
+ * total staked amount, and the last reward timestamp.
+ *
+ * @param event - The UpdatePool event contains the updated pool parameters.
+ */
 export function handleUpdatePool(event: PoolUpdateEvent): void {
   let pool = Pool.load(event.address.toHex())!;
   pool.accRewardPerShare = event.params.accumulatedRewardTokenPerShare;

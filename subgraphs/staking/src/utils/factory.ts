@@ -1,6 +1,12 @@
 import { BigInt, Address } from "@graphprotocol/graph-ts";
 import { Factory } from "../../generated/schema";
 
+/**
+ * Retrieves or creates a Factory entity for a given factory address.
+ *
+ * @param factoryAddress - The address of the factory.
+ * @returns The Factory entity corresponding to the given factory address.
+ */
 export function getOrCreateFactory(factoryAddress: Address): Factory {
     const id = factoryAddress.toHex();
 

@@ -15,6 +15,15 @@ import { BigInt, Address } from "@graphprotocol/graph-ts";
 import { fetchToken } from "../src/utils/token";
 import { getOrCreateFactory } from "../src/utils/factory";
 
+/**
+ * Handles the `RequestSubmitted` event for LockUp Pools emitted 
+ * by the ERC20 StakingFactory contract.
+ * 
+ * Indexing the request submission event for lock-up pools
+ * Replicating the provided data in the new Request entity
+ *
+ * @param event - The LockUpPoolRequestSubmitted event contains the request details.
+ */
 export function handleLockUpPoolRequestSubmitted(event: LockUpPoolRequestSubmitted): void {
   const requestId = event.address.toHex() + "-" + event.params.id.toString();
 
@@ -33,6 +42,15 @@ export function handleLockUpPoolRequestSubmitted(event: LockUpPoolRequestSubmitt
   request.save();
 }
 
+/**
+ * Handles the `RequestSubmitted` event for Penalty Pools emitted 
+ * by the ERC20 PenaltyFeeStakingFactory contract.
+ * 
+ * Indexing the request submission event for penalty pools
+ * Replicating the provided data in the new Request entity
+ *
+ * @param event - The PenaltyPoolRequestSubmitted event contains the request details.
+ */
 export function handlePenaltyPoolRequestSubmitted(event: PenaltyPoolRequestSubmitted): void {
   const requestId = event.address.toHex() + "-" + event.params.id.toString();
 
@@ -50,6 +68,16 @@ export function handlePenaltyPoolRequestSubmitted(event: PenaltyPoolRequestSubmi
   request.save();
 }
 
+/**
+ * Handles the `StakingPoolDeployed` event emitted 
+ * by the ERC20 StakingFactory (LockUp | Penalty) contract.
+ * 
+ * Indexing the staking pool deployment event
+ * Updating the factory's total pool count,
+ * Initializing the Pool entity from the incoming request
+ *
+ * @param event - The StakingPoolDeployed event contains the deployment details.
+ */
 export function handlePoolDeployment(event: StakingPoolDeployed): void {
   const poolAddress = event.params.stakingAddress.toHex();
   const requestId = event.address.toHex() + "-" + event.params.id.toString();
@@ -85,6 +113,15 @@ export function handlePoolDeployment(event: StakingPoolDeployed): void {
   StakingPoolTemplate.create(event.params.stakingAddress);
 }
 
+/**
+ * Handles the `RequestStatusChanged` event emitted 
+ * by the ERC20 StakingFactory (LockUp | Penalty) contract.
+ * 
+ * Indexing the request status change event
+ * Updating the status of the corresponding request entity.
+ *
+ * @param event - The RequestStatusChanged event contains the updated status and request ID.
+ */
 export function handlePoolStatusChanged(event: RequestStatusChanged): void {
   const requestId = event.address.toHex() + "-" + event.params.id.toString();
   let request = Request.load(requestId)!;
