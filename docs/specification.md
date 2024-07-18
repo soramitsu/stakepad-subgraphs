@@ -24,7 +24,7 @@ The stakepad-subgraph consist of 2 main components:
 * Factory handler which index data from `staking factory contracts`
 
 ## Token Types
-Dex protocol works with ERC20 and KIP7 token standards that implement APIs for fungible tokens within smart contracts.
+Stakepad-subgraph index the data from ERC20 and ERC721 token standards that implement APIs on smart contracts side.
 
 ## ERC20
 ERC20 is a token standard for Fungible tokens that is used in pools which indexed in the subgraph
