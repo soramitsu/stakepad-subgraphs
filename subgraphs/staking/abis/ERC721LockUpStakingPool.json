@@ -191,18 +191,6 @@
 				"internalType": "uint256",
 				"name": "pending",
 				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "penaltyAmount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "totalPenalties",
-				"type": "uint256"
 			}
 		],
 		"name": "Claim",
@@ -347,12 +335,12 @@
 		"name": "pool",
 		"outputs": [
 			{
-				"internalType": "address",
+				"internalType": "contract IERC721",
 				"name": "stakeToken",
 				"type": "address"
 			},
 			{
-				"internalType": "address",
+				"internalType": "contract IERC20",
 				"name": "rewardToken",
 				"type": "address"
 			},

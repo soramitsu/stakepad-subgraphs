@@ -14,37 +14,14 @@ import {
 
 import {
   ERC20StakingPool as ERC20StakingPoolTemplate,
-  ERC721LockUpStakingPool as ERC721StakingPoolTemplate
 } from "../generated/templates";
 
-import {
-  fetchToken,
-  fetchNFToken,
-  ft_lu_factory,
-  ft_pen_factory,
-  nft_lu_factory,
-  nft_pen_factory
-} from "./utils/token";
-
-function initPoolFromRequest(pool: Pool, request: Request): void {
-  pool.startTime = request.poolStartTime;
-  pool.endTime = request.poolEndTime;
-  pool.unstakeLockUpTime = request.unstakeLockUpTime;
-  pool.claimLockUpTime = request.claimLockUpTime;
-  pool.penaltyPeriod = request.penaltyPeriod;
-  pool.rewardTokenPerSecond = request.rewardPerSecond;
-  pool.totalStaked = BigInt.fromI32(0);
-  pool.totalClaimed = BigInt.fromI32(0);
-  pool.accRewardPerShare = BigInt.fromI32(0);
-  pool.lastRewardTimestamp = request.poolStartTime;
-  pool.owner = request.deployer;
-}
+import { fetchToken } from "./utils/token";
 
 export function handleLockUpPoolRequestSubmitted(event: LockUpPoolRequestSubmitted): void {
   const requestId = event.address.toHex() + "-" + event.params.id.toString();
 
   let request = new Request(requestId);
-  request.ipfsHash = event.params.ipfsHash.toHex();
   request.deployer = event.params.deployer.toHex();
   request.requestStatus = BigInt.fromI32(1);
   request.stakeToken = event.params.data.stakeToken.toHex();
@@ -88,35 +65,25 @@ export function handlePoolDeployment(event: StakingPoolDeployed): void {
   request.requestStatus = BigInt.fromI32(4);
   request.save();
 
-  let isNFTPool = false;
   let pool = new Pool(poolAddress);
+  let stakeToken = fetchToken(Address.fromString(request.stakeToken));
+  let rewardToken = fetchToken(Address.fromString(request.rewardToken));
 
-  if (poolAddress == ft_lu_factory || poolAddress == ft_pen_factory) {
-    let stakeToken = fetchToken(Address.fromString(request.stakeToken));
-    let rewardToken = fetchToken(Address.fromString(request.rewardToken));
-
-    pool.stakeToken = stakeToken.id;
-    pool.rewardToken = rewardToken.id;
-  }
-  else if (poolAddress == nft_lu_factory || poolAddress == nft_pen_factory) {
-    let stakeNFToken = fetchNFToken(Address.fromString(request.stakeToken), event.params.stakingAddress);
-    let rewardNFToken = fetchNFToken(Address.fromString(request.rewardToken), event.params.stakingAddress);
-
-    pool.stakeNFToken = stakeNFToken.id;
-    pool.rewardToken = rewardNFToken.id;
-
-    isNFTPool = true;
-  }
-
-  initPoolFromRequest(pool, request);
+  pool.stakeToken = stakeToken.id;
+  pool.rewardToken = rewardToken.id;
+  pool.startTime = request.poolStartTime;
+  pool.endTime = request.poolEndTime;
+  pool.unstakeLockUpTime = request.unstakeLockUpTime;
+  pool.claimLockUpTime = request.claimLockUpTime;
+  pool.rewardTokenPerSecond = request.rewardPerSecond;
+  pool.totalStaked = BigInt.fromI32(0);
+  pool.totalClaimed = BigInt.fromI32(0);
+  pool.accRewardPerShare = BigInt.fromI32(0);
+  pool.lastRewardTimestamp = request.poolStartTime;
+  pool.owner = request.deployer;
   pool.save();
 
-  if (isNFTPool) {
-    ERC721StakingPoolTemplate.create(event.params.stakingAddress);
-  }
-  else {
-    ERC20StakingPoolTemplate.create(event.params.stakingAddress);
-  }
+  ERC20StakingPoolTemplate.create(event.params.stakingAddress);
 }
 
 export function handlePoolStatusChanged(event: RequestStatusChanged): void {

@@ -29,7 +29,7 @@ dataSources:
       eventHandlers:
         - event: StakingPoolDeployed(indexed address,indexed uint256)
           handler: handlePoolDeployment
-        - event: RequestSubmitted(indexed uint256,bytes32,indexed address,indexed uint8,(address,address,uint256,uint256,uint256,uint256,uint256))
+        - event: RequestSubmitted(indexed uint256,indexed address,indexed uint8,(address,address,uint256,uint256,uint256,uint256,uint256))
           handler: handleLockUpPoolRequestSubmitted
         - event: RequestStatusChanged(indexed uint256,indexed uint8)
           handler: handlePoolStatusChanged
@@ -59,7 +59,7 @@ dataSources:
       eventHandlers:
         - event: StakingPoolDeployed(indexed address,indexed uint256)
           handler: handlePoolDeployment
-        - event: RequestSubmitted(indexed uint256,bytes32,indexed address,indexed uint8,(address,address,uint256,uint256,uint256,uint256))
+        - event: RequestSubmitted(indexed uint256,indexed address,indexed uint8,(address,address,uint256,uint256,uint256,uint256))
           handler: handlePenaltyPoolRequestSubmitted
         - event: RequestStatusChanged(indexed uint256,indexed uint8)
           handler: handlePoolStatusChanged
@@ -148,7 +148,7 @@ templates:
         - name: ERC20PenaltyFeePool
           file: ./abis/ERC20PenaltyFeePool.json
       eventHandlers:
-        - event: Claim(indexed address,uint256,uint256,uint256)
+        - event: Claim(indexed address,uint256)
           handler: handleClaim
         - event: Stake(indexed address,uint256)
           handler: handleStake
@@ -176,7 +176,7 @@ templates:
         - name: ERC721LockUpStakingPool
           file: ./abis/ERC721LockUpStakingPool.json
       eventHandlers:
-        - event: Claim(indexed address,uint256,uint256,uint256)
+        - event: Claim(indexed address,uint256)
           handler: handleClaim
         - event: Stake(indexed address,indexed uint256[])
           handler: handleNFTStake
