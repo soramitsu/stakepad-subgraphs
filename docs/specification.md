@@ -80,3 +80,8 @@ Factory:
 
 Pool:
 ![arch_pool](./imgs/arch_pool.png)
+
+## Changes During Redeploy
+
+When redeploying the subgraph, several key elements may change from smart contracts which include modifications to the GraphQL schema, updates to the subgraph manifest (subgraph.yaml) and mapping files. The parameters in the manifest, such as `source`, `mapping`, and `eventHandlers`, might be updated to accommodate new contract addresses, ABI definitions, or additional event handlers to capture newly emitted events. During the redeployment process, we indicate a new version number for the redeployed subgraph. 
+> graph deploy --product hosted-service <SUBGRAPH_NAME> --version-label <NEW_VERSION>
