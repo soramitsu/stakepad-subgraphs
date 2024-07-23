@@ -24,7 +24,7 @@ The stakepad-subgraph consist of 2 main components:
 * Factory handler which index data from `staking factory contracts`
 
 ## Token Types
-Stakepad-subgraph index the data from ERC20 and ERC721 token standards that implement APIs on smart contracts side.
+Stakepad-subgraph fetches the token information from ERC20 and ERC721 token standards that implement APIs on smart contracts side.
 
 ## ERC20
 ERC20 is a token standard for Fungible tokens that is used in pools which indexed in the subgraph
@@ -35,7 +35,7 @@ ERC721 is a token standard for Non-fungible tokens that is used in pools which i
 ## Pool
 Subgraph indexes different type of pools such as LockUp, NoLockUp, PenaltyFee
 
-The `pool.ts` mapping file handles the following events emitted in smart contracts:
+The `pool.ts` mapping file contains handlers to index the following events emitted in smart contracts:
 * Stake Event - index the data emitted after staking some tokens in the pool.
 * Unstake Event - index the data emitted after unstaking some tokens in the pool.
 * Claim Event - index the data emitted after claiming some tokens in the pool.
@@ -54,9 +54,9 @@ export function handleUpdatePool(event: PoolUpdateEvent): void {}
 
 ## Factory
 Subgraph Factory also indexes different type of factories such as LockUp, NoLockUp, PenalteFee through one common event:
-* StakingPoolDeployedEvent - index the data emitter after sending request to create a new staking pool with specific parameters
+* StakingPoolDeployed Event - index the data emitted after sending request to create a new staking pool with specific parameters
 
-The `factory.ts` mapping file handles the only one event emitted in factory smart contracts for all type of factories:
+The `factory.ts` mapping file contains the only one handler that index events emitted in factory smart contracts for all type of factories:
 ```ts
 export function handleStakingPoolDeployed(event: StakingPoolDeployedEvent): void {}
 ```
