@@ -23,17 +23,17 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "unstakeLockUp",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "claimLockUp",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "rewardTokenPerSecond",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "unstakeLockUpTime",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "claimLockUpTime",
 				"type": "uint256"
 			}
 		],
@@ -95,12 +95,37 @@
 	},
 	{
 		"inputs": [],
+		"name": "InvalidPenaltyPeriod",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "InvalidRewardRate",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "InvalidStakingPeriod",
 		"type": "error"
 	},
 	{
 		"inputs": [],
 		"name": "InvalidStartTime",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "InvalidTokenAddress",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NotAdmin",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NotStaker",
 		"type": "error"
 	},
 	{
@@ -185,6 +210,12 @@
 				"indexed": false,
 				"internalType": "uint256",
 				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "penaltyAmount",
 				"type": "uint256"
 			}
 		],

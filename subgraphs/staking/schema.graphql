@@ -69,6 +69,8 @@ type Pool @entity {
   
   totalClaimed: BigInt!
 
+  totalPenalties: BigInt!
+
   lastRewardTimestamp: BigInt!
 
   accRewardPerShare: BigInt!

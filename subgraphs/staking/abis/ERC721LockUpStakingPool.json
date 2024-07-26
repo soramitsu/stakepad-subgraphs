@@ -13,17 +13,17 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "rewardTokenPerSecond",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "poolStartTime",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
 				"name": "poolEndTime",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "rewardTokenPerSecond",
 				"type": "uint256"
 			},
 			{
@@ -95,12 +95,32 @@
 	},
 	{
 		"inputs": [],
+		"name": "InvalidPenaltyPeriod",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "InvalidRewardRate",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "InvalidStakingPeriod",
 		"type": "error"
 	},
 	{
 		"inputs": [],
 		"name": "InvalidStartTime",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "InvalidTokenAddress",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NotAdmin",
 		"type": "error"
 	},
 	{
@@ -190,6 +210,12 @@
 				"indexed": false,
 				"internalType": "uint256",
 				"name": "pending",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "penaltyAmount",
 				"type": "uint256"
 			}
 		],
@@ -299,6 +325,40 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "",
+				"type": "bytes"
+			}
+		],
+		"name": "onERC721Received",
+		"outputs": [
+			{
+				"internalType": "bytes4",
+				"name": "",
+				"type": "bytes4"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "owner",
 		"outputs": [
@@ -335,12 +395,12 @@
 		"name": "pool",
 		"outputs": [
 			{
-				"internalType": "contract IERC721",
+				"internalType": "address",
 				"name": "stakeToken",
 				"type": "address"
 			},
 			{
-				"internalType": "contract IERC20",
+				"internalType": "address",
 				"name": "rewardToken",
 				"type": "address"
 			},

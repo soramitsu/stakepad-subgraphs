@@ -1,6 +1,12 @@
 [
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "managerContract",
+				"type": "address"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
 	},
@@ -38,22 +44,12 @@
 	},
 	{
 		"inputs": [],
-		"name": "InvalidId",
+		"name": "InvalidManagerAddress",
 		"type": "error"
 	},
 	{
 		"inputs": [],
-		"name": "InvalidRequestStatus",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "InvalidRewardRate",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "InvalidTokenAddress",
+		"name": "InvalidPayloadLength",
 		"type": "error"
 	},
 	{
@@ -113,102 +109,9 @@
 		"inputs": [
 			{
 				"indexed": true,
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"indexed": true,
-				"internalType": "enum IBaseFactory.Status",
-				"name": "status",
-				"type": "uint8"
-			}
-		],
-		"name": "RequestStatusChanged",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "deployer",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "enum IBaseFactory.Status",
-				"name": "status",
-				"type": "uint8"
-			},
-			{
-				"components": [
-					{
-						"internalType": "address",
-						"name": "stakeToken",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "rewardToken",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "poolStartTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "poolEndTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "unstakeLockUpTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "claimLockUpTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "rewardPerSecond",
-						"type": "uint256"
-					}
-				],
-				"indexed": false,
-				"internalType": "struct ILockUpFactory.DeploymentData",
-				"name": "data",
-				"type": "tuple"
-			}
-		],
-		"name": "RequestSubmitted",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
 				"internalType": "address",
 				"name": "stakingAddress",
 				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
 			}
 		],
 		"name": "StakingPoolDeployed",
@@ -217,48 +120,14 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			}
-		],
-		"name": "approveRequest",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
+				"internalType": "address",
+				"name": "deployer",
+				"type": "address"
+			},
 			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			}
-		],
-		"name": "cancelRequest",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			}
-		],
-		"name": "denyRequest",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
+				"internalType": "bytes",
+				"name": "payload",
+				"type": "bytes"
 			}
 		],
 		"name": "deploy",
@@ -287,97 +156,11 @@
 	},
 	{
 		"inputs": [],
-		"name": "getRequests",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "address",
-						"name": "deployer",
-						"type": "address"
-					},
-					{
-						"internalType": "enum IBaseFactory.Status",
-						"name": "requestStatus",
-						"type": "uint8"
-					},
-					{
-						"components": [
-							{
-								"internalType": "address",
-								"name": "stakeToken",
-								"type": "address"
-							},
-							{
-								"internalType": "address",
-								"name": "rewardToken",
-								"type": "address"
-							},
-							{
-								"internalType": "uint256",
-								"name": "poolStartTime",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "poolEndTime",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "unstakeLockUpTime",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "claimLockUpTime",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "rewardPerSecond",
-								"type": "uint256"
-							}
-						],
-						"internalType": "struct ILockUpFactory.DeploymentData",
-						"name": "data",
-						"type": "tuple"
-					}
-				],
-				"internalType": "struct ILockUpFactory.Request[]",
-				"name": "reqs",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
 		"name": "owner",
 		"outputs": [
 			{
 				"internalType": "address",
 				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			}
-		],
-		"name": "poolById",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "pool",
 				"type": "address"
 			}
 		],
@@ -392,116 +175,13 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"components": [
-					{
-						"internalType": "address",
-						"name": "stakeToken",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "rewardToken",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "poolStartTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "poolEndTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "unstakeLockUpTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "claimLockUpTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "rewardPerSecond",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct ILockUpFactory.DeploymentData",
-				"name": "data",
-				"type": "tuple"
-			}
-		],
-		"name": "requestDeployment",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "requests",
+		"inputs": [],
+		"name": "requestManager",
 		"outputs": [
 			{
 				"internalType": "address",
-				"name": "deployer",
+				"name": "",
 				"type": "address"
-			},
-			{
-				"internalType": "enum IBaseFactory.Status",
-				"name": "requestStatus",
-				"type": "uint8"
-			},
-			{
-				"components": [
-					{
-						"internalType": "address",
-						"name": "stakeToken",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "rewardToken",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "poolStartTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "poolEndTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "unstakeLockUpTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "claimLockUpTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "rewardPerSecond",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct ILockUpFactory.DeploymentData",
-				"name": "data",
-				"type": "tuple"
 			}
 		],
 		"stateMutability": "view",
@@ -535,6 +215,19 @@
 			}
 		],
 		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newManagerContract",
+				"type": "address"
+			}
+		],
+		"name": "updateManagerContract",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

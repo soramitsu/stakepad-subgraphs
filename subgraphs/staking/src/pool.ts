@@ -77,6 +77,7 @@ export function handleClaim(event: ClaimEvent): void {
   user.pending = BigInt.fromI32(0);
   user.claimed = user.claimed.plus(event.params.amount);
   pool.totalClaimed = pool.totalClaimed.plus(event.params.amount);
+  pool.totalPenalties = pool.totalPenalties.plus(event.params.penaltyAmount);
 
   pool.save();
   user.save();
